@@ -11,7 +11,7 @@ import Footer from '../../components/Footer/Footer';
 import Countdown from '../../components/Countdown/Countdown';
 import ConfirmJoinModal from '../../components/ConfirmJoinModal/ConfirmJoinModal';
 import GiveawayLoader from '../../components/GiveawayLoader/GiveawayLoader';
-import { fetchGiveawayBySlug } from '../../services/api';
+import { fetchGiveawayBySlug, fetchUserBalance } from '../../services/api';
 import { GIVEAWAY_STATUS } from '../../data/giveawayData';
 import ADMIN_USER from '../../config/adminUser';
 
@@ -71,6 +71,7 @@ export default function GiveawayDetailPage() {
   const [showConfirm, setShowConfirm] = useState(false);
   const [joined,      setJoined]      = useState(false);
   const [imageError,  setImageError]  = useState(false);
+  const [userBalance, setUserBalance] = useState(ADMIN_USER.balance); // Real balance from API
 
   const user       = ADMIN_USER; // Use centralized admin user
   const isLoggedIn = true; // Always logged in as admin
@@ -86,12 +87,16 @@ export default function GiveawayDetailPage() {
       setPrize(gRes.data.prize ?? null);
       // Don't check participation status - allow joining all prizes
       setMyStatus(null);
+      
+      // Fetch real-time balance
+      const balance = await fetchUserBalance(user.id);
+      setUserBalance(balance);
     } catch {
       setError("We couldn't load this giveaway. Please try again.");
     } finally {
       setLoading(false);
     }
-  }, [slug]);
+  }, [slug, user.id]);
 
   useEffect(() => { loadData(); }, [loadData]);
 
@@ -100,7 +105,7 @@ export default function GiveawayDetailPage() {
   const isActive        = status === GIVEAWAY_STATUS.ACTIVE;
   const isEnded         = status === GIVEAWAY_STATUS.ENDED;
   const isParticipating = joined || myStatus?.isParticipating;
-  const balance         = prize ? (user.balance?.[prize.entryCurrency] ?? 0) : 0;
+  const balance         = prize ? (userBalance?.[prize.entryCurrency] ?? 0) : 0;
   const hasEnough       = prize ? balance >= (prize.entryFee ?? 0) : false;
   const emoji           = PRIZE_EMOJI[slug] ?? '🎁';
   const terms           = prize ? buildTerms(prize) : [];
@@ -468,7 +473,13 @@ export default function GiveawayDetailPage() {
             prize={prize}
             giveaway={giveaway}
             onClose={() => setShowConfirm(false)}
-            onSuccess={() => { setJoined(true); setShowConfirm(false); }}
+            onSuccess={async () => { 
+              setJoined(true); 
+              setShowConfirm(false); 
+              // Refresh balance after successful join
+              const balance = await fetchUserBalance(user.id);
+              setUserBalance(balance);
+            }}
           />
         )}
       </AnimatePresence>

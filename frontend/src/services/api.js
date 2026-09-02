@@ -263,6 +263,26 @@ export async function fetchGiveawayStats() {
   }
 }
 
+// ─── Balance ───────────────────────────────────────────────────────────────────
+
+/**
+ * GET /api/balance/:userId
+ * Fetch real-time user balance from database
+ */
+export async function fetchUserBalance(userId) {
+  try {
+    const res = await apiFetch(`/balance/${userId}`);
+    if (res.success && res.data) {
+      return res.data.balance;
+    }
+    throw new Error(res.error);
+  } catch {
+    console.warn('[API] Backend balance unreachable — using default balance');
+    // Fallback to default balance
+    return { VEs: 1000, SVEs: 1500, Tokens: 5000 };
+  }
+}
+
 // ─── Auth helpers ──────────────────────────────────────────────────────────────
 function authHeader() {
   const token = localStorage.getItem('veloop_token');
