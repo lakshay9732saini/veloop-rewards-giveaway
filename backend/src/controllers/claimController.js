@@ -1,4 +1,4 @@
-const { v4: uuidv4 } = require('uuid');
+const { randomUUID: uuidv4 } = require('crypto');
 const { checkIfWinner } = require('../services/winnerService');
 const PrizeClaim = require('../models/PrizeClaim');
 const GiveawayWinner = require('../models/GiveawayWinner');
