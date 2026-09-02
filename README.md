@@ -67,8 +67,8 @@ cd "VELoop Intership part 2"
 cd backend
 npm install
 
-# Create .env file
-MONGODB_URI=mongodb+srv://admin_admin:admin123@veloop.sw1whtf.mongodb.net/veloop_rewards
+# Create .env file (copy from .env.example)
+MONGODB_URI=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/veloop_rewards
 PORT=5000
 NODE_ENV=development
 
@@ -318,8 +318,8 @@ GET  /api/balance/:userId                # Get user balance
 
 ### 3️⃣ Database Verification
 ```bash
-# Connect to MongoDB Atlas
-mongosh "mongodb+srv://admin_admin:admin123@veloop.sw1whtf.mongodb.net/veloop_rewards"
+# Connect to MongoDB Atlas (use your own credentials)
+mongosh "mongodb+srv://<username>:<password>@<cluster>.mongodb.net/veloop_rewards"
 
 # Check user balance
 db.userbalances.findOne({ userId: "ADMIN_USER" })
@@ -375,12 +375,12 @@ cd backend
 vercel --prod
 
 # Environment Variables (Vercel Dashboard)
-MONGODB_URI=mongodb+srv://admin_admin:admin123@veloop.sw1whtf.mongodb.net/veloop_rewards
+MONGODB_URI=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/veloop_rewards
 NODE_ENV=production
 PORT=5000
-JWT_SECRET=your_jwt_secret
-REFRESH_SECRET=your_refresh_secret
-CLIENT_URL=https://frontend-six-xi-50.vercel.app
+JWT_SECRET=your_jwt_secret_here
+REFRESH_SECRET=your_refresh_secret_here
+CLIENT_URL=https://your-frontend-url.vercel.app
 ```
 
 ### Monorepo Config (Root vercel.json)
