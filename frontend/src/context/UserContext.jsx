@@ -26,10 +26,12 @@ export function UserProvider({ children }) {
     const loadBalance = async () => {
       try {
         const balance = await fetchUserBalance(user.id);
-        setUser(prev => ({
-          ...prev,
-          balance
-        }));
+        if (balance) {
+          setUser(prev => ({
+            ...prev,
+            balance
+          }));
+        }
       } catch (error) {
         console.error('Failed to fetch balance:', error);
       }
@@ -63,10 +65,12 @@ export function UserProvider({ children }) {
   const refreshBalance = async () => {
     try {
       const balance = await fetchUserBalance(user.id);
-      setUser(prev => ({
-        ...prev,
-        balance
-      }));
+      if (balance) {
+        setUser(prev => ({
+          ...prev,
+          balance
+        }));
+      }
       return balance;
     } catch (error) {
       console.error('Failed to refresh balance:', error);

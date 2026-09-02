@@ -19,7 +19,8 @@ import {
 } from '../data/giveawayData';
 
 // With the Vite proxy, '/api' resolves to 'http://localhost:5000/api' in dev
-const API_BASE = '/api';
+// In production, VITE_API_URL must be set to the deployed backend URL
+const API_BASE = import.meta.env.VITE_API_URL || '/api';
 
 // ─── Helper ────────────────────────────────────────────────────────────────────
 async function apiFetch(path, options = {}) {
@@ -276,10 +277,10 @@ export async function fetchUserBalance(userId) {
       return res.data.balance;
     }
     throw new Error(res.error);
-  } catch {
-    console.warn('[API] Backend balance unreachable — using default balance');
-    // Fallback to default balance
-    return { VEs: 1000, SVEs: 1500, Tokens: 5000 };
+  } catch (err) {
+    console.warn('[API] Backend balance unreachable:', err);
+    // Return null so UI knows balance is not loaded yet
+    return null;
   }
 }
 

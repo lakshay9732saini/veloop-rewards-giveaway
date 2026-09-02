@@ -107,7 +107,8 @@ export default function GiveawayDetailPage() {
   const isActive        = status === GIVEAWAY_STATUS.ACTIVE;
   const isEnded         = status === GIVEAWAY_STATUS.ENDED;
   const isParticipating = joined || myStatus?.isParticipating;
-  const balance         = prize ? (userBalance?.[prize.entryCurrency] ?? 0) : 0;
+  // Use userBalance from API, fallback to context balance, never hardcoded
+  const balance         = prize ? ((userBalance ?? {})?.[prize.entryCurrency] ?? 0) : 0;
   const hasEnough       = prize ? balance >= (prize.entryFee ?? 0) : false;
   const emoji           = PRIZE_EMOJI[slug] ?? '🎁';
   const terms           = prize ? buildTerms(prize) : [];
