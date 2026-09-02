@@ -11,9 +11,8 @@ import Footer from '../../components/Footer/Footer';
 import Countdown from '../../components/Countdown/Countdown';
 import ConfirmJoinModal from '../../components/ConfirmJoinModal/ConfirmJoinModal';
 import GiveawayLoader from '../../components/GiveawayLoader/GiveawayLoader';
-import { fetchGiveawayBySlug, fetchUserBalance } from '../../services/api';
+import { fetchGiveawayBySlug } from '../../services/api';
 import { GIVEAWAY_STATUS } from '../../data/giveawayData';
-import ADMIN_USER from '../../config/adminUser';
 import { useUser } from '../../context/UserContext';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -63,7 +62,7 @@ function buildTerms(prize) {
 export default function GiveawayDetailPage() {
   const { slug }   = useParams();
   const navigate   = useNavigate();
-  const { refreshBalance } = useUser();
+  const { user, refreshBalance } = useUser();
 
   const [giveaway,    setGiveaway]    = useState(null);
   const [prize,       setPrize]       = useState(null);
@@ -73,10 +72,8 @@ export default function GiveawayDetailPage() {
   const [showConfirm, setShowConfirm] = useState(false);
   const [joined,      setJoined]      = useState(false);
   const [imageError,  setImageError]  = useState(false);
-  const [userBalance, setUserBalance] = useState(null); // Real balance from API (null initially)
 
-  const user       = ADMIN_USER; // Use centralized admin user
-  const isLoggedIn = true; // Always logged in as admin
+  const isLoggedIn = true;
 
   // ── Load ──────────────────────────────────────────────────────────────────
   const loadData = useCallback(async () => {
@@ -87,18 +84,13 @@ export default function GiveawayDetailPage() {
       if (!gRes.success) { setError('This giveaway could not be found.'); return; }
       setGiveaway(gRes.data);
       setPrize(gRes.data.prize ?? null);
-      // Don't check participation status - allow joining all prizes
       setMyStatus(null);
-      
-      // Fetch real-time balance
-      const balance = await fetchUserBalance(user.id);
-      setUserBalance(balance);
     } catch {
       setError("We couldn't load this giveaway. Please try again.");
     } finally {
       setLoading(false);
     }
-  }, [slug, user.id]);
+  }, [slug]);
 
   useEffect(() => { loadData(); }, [loadData]);
 
@@ -107,8 +99,8 @@ export default function GiveawayDetailPage() {
   const isActive        = status === GIVEAWAY_STATUS.ACTIVE;
   const isEnded         = status === GIVEAWAY_STATUS.ENDED;
   const isParticipating = joined || myStatus?.isParticipating;
-  // Use userBalance from API, fallback to context balance, never hardcoded
-  const balance         = prize ? ((userBalance ?? {})?.[prize.entryCurrency] ?? 0) : 0;
+  // Always read from context (UserContext keeps it in sync via updateBalance + refreshBalance)
+  const balance         = prize ? (user.balance?.[prize.entryCurrency] ?? 0) : 0;
   const hasEnough       = prize ? balance >= (prize.entryFee ?? 0) : false;
   const emoji           = PRIZE_EMOJI[slug] ?? '🎁';
   const terms           = prize ? buildTerms(prize) : [];
@@ -478,13 +470,12 @@ export default function GiveawayDetailPage() {
             onClose={() => setShowConfirm(false)}
             onSuccess={async () => { 
               setJoined(true); 
-              setShowConfirm(false); 
-              // Small delay to let DB write complete, then fetch real balance
-              await new Promise(r => setTimeout(r, 800));
-              const balance = await fetchUserBalance(user.id);
-              if (balance) setUserBalance(balance);
-              // Also refresh global navbar balance
-              await refreshBalance();
+              setShowConfirm(false);
+              // Balance already updated locally in ConfirmJoinModal via updateBalance()
+              // Fetch fresh balance from DB after 3 seconds (enough time for DB write)
+              setTimeout(async () => {
+                await refreshBalance();
+              }, 3000);
             }}
           />
         )}
