@@ -10,13 +10,13 @@ export const ADMIN_USER = {
   name: 'Admin',
   email: 'admin@veloop.com',
   balance: {
-    [CURRENCY.VE]: 1000,
-    [CURRENCY.SVE]: 1500,
-    [CURRENCY.TOKEN]: 5000,
+    [CURRENCY.VE]: 10000,
+    [CURRENCY.SVE]: 5000,
+    [CURRENCY.TOKEN]: 50000,
     // Legacy keys for compatibility
-    VEs: 1000,
-    SVEs: 1500,
-    Tokens: 5000
+    VEs: 10000,
+    SVEs: 5000,
+    Tokens: 50000
   },
   entries: 0,
   userState: 'visitor', // Allows joining prizes
