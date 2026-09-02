@@ -62,7 +62,7 @@ function buildTerms(prize) {
 export default function GiveawayDetailPage() {
   const { slug }   = useParams();
   const navigate   = useNavigate();
-  const { user, refreshBalance } = useUser();
+  const { user } = useUser();
 
   const [giveaway,    setGiveaway]    = useState(null);
   const [prize,       setPrize]       = useState(null);
@@ -468,14 +468,9 @@ export default function GiveawayDetailPage() {
             prize={prize}
             giveaway={giveaway}
             onClose={() => setShowConfirm(false)}
-            onSuccess={async () => { 
+            onSuccess={() => {
               setJoined(true); 
               setShowConfirm(false);
-              // Balance already updated locally in ConfirmJoinModal via updateBalance()
-              // Fetch fresh balance from DB after 3 seconds (enough time for DB write)
-              setTimeout(async () => {
-                await refreshBalance();
-              }, 3000);
             }}
           />
         )}

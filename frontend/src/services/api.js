@@ -172,14 +172,8 @@ export async function joinGiveaway(giveawayId, prizeId) {
       return res;
     }
     
-    // If backend fails, use demo mode
-    console.warn('[API] Backend join failed, using demo mode');
-    await new Promise(resolve => setTimeout(resolve, 500));
-    return {
-      success: true,
-      data: { participationId: 'PART-DEMO-' + Date.now(), giveawayId, message: "You're in!" },
-      _mock: true,
-    };
+    // Preserve server-side business errors so the UI does not show a false deduction.
+    return res;
   } catch (error) {
     console.error('[API] Join giveaway error:', error);
     // Fallback to demo mode

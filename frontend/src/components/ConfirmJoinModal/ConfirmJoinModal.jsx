@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { X, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import styles from './ConfirmJoinModal.module.css';
-import { CURRENCY } from '../../data/giveawayData';
 import { joinGiveaway, API_ERROR_MESSAGES as apiErrors } from '../../services/api';
 import { useUser } from '../../context/UserContext';
 
@@ -28,7 +27,7 @@ export default function ConfirmJoinModal({ prize, giveaway, onClose, onSuccess }
   const [error, setError] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { user, updateBalance, addParticipation } = useUser();
+  const { user, updateBalance, refreshBalance, addParticipation } = useUser();
   const balance = user.balance[prize.entryCurrency] || 0;
   const fee = prize.entryFee;
   const balanceAfter = balance - fee;
@@ -54,6 +53,8 @@ export default function ConfirmJoinModal({ prize, giveaway, onClose, onSuccess }
         
         // Update balance in context
         updateBalance(prize.entryCurrency, fee);
+        // Reconcile both navbar and giveaway cards with the persisted balance.
+        await refreshBalance();
         
         // Add participation to user
         addParticipation(giveaway.id, prize.id, prize.name, fee, prize.entryCurrency);
