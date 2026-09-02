@@ -14,7 +14,11 @@ app.use(helmet());
 
 // ── CORS ──────────────────────────────────────────────────────────────────────
 // In production, replace with your actual frontend domain.
-const ALLOWED_ORIGINS = (process.env.CLIENT_URL || 'http://localhost:5173').split(',').map(s => s.trim());
+const ALLOWED_ORIGINS = [
+  'http://localhost:5173',
+  'https://veloop-giveaway.vercel.app',
+  ...(process.env.CLIENT_URL || '').split(',').map(s => s.trim()).filter(Boolean),
+];
 app.use(cors({
   origin: (origin, callback) => {
     // Allow no-origin (server-to-server) and allowed origins
