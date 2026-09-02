@@ -422,3 +422,5 @@ For questions or issues:
 **Happy Coding!** 🚀✨
 #   U p d a t e d   M o n g o D B   c r e d e n t i a l s  
  
+ #   F r o n t e n d   d e p l o y e d  
+ 
