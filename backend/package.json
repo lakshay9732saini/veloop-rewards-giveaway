@@ -1,0 +1,32 @@
+{
+  "name": "veloop-rewards-backend",
+  "version": "1.0.0",
+  "description": "VELOOP Rewards – Giveaway Backend API",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": [
+    "veloop",
+    "giveaway",
+    "rewards"
+  ],
+  "author": "VELOOP Rewards",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.7.0",
+    "express-validator": "^7.3.2",
+    "helmet": "^8.3.0",
+    "jsonwebtoken": "^9.0.3",
+    "mongodb": "^7.6.0",
+    "mongoose": "^9.9.4",
+    "morgan": "^1.12.0",
+    "uuid": "^14.0.2"
+  }
+}

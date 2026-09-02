@@ -1,0 +1,52 @@
+.wrap { margin-bottom: 1.5rem; }
+
+/* Winner */
+.winner {
+  background: linear-gradient(135deg, rgba(245,158,11,0.12) 0%, rgba(124,58,237,0.1) 100%);
+  border: 1.5px solid rgba(245,158,11,0.3);
+  border-radius: var(--r-xl);
+  padding: 1.75rem 2rem;
+  display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap;
+}
+.trophyIcon { font-size: 3rem; flex-shrink: 0; animation: float 4s ease-in-out infinite; }
+.winnerInfo { flex: 1; min-width: 200px; }
+.congrats { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold-400); margin-bottom: 0.35rem; }
+.wonTitle { font-family: var(--font-display); font-size: 1.5rem; font-weight: 800; color: var(--text-primary); margin-bottom: 0.35rem; line-height: 1.2; }
+.wonPrize { font-size: 1rem; color: var(--gold-400); font-weight: 600; margin-bottom: 0.75rem; }
+.claimDeadline { font-size: 0.75rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.4rem; }
+.claimBtn {
+  font-size: 0.875rem; padding: 0.65rem 1.5rem;
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  border-radius: var(--r-lg);
+  background: var(--grad-gold); border: none; color: #1a0a00;
+  font-weight: 700; cursor: pointer; transition: all var(--t-base); white-space: nowrap;
+}
+.claimBtn:hover { box-shadow: var(--shadow-gold); transform: translateY(-1px); }
+
+.claimStatus { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.4rem 1rem; border-radius: var(--r-full); font-size: 0.75rem; font-weight: 700; }
+.submitted  { background: rgba(124,58,237,0.12); color: var(--purple-300); border: 1px solid rgba(124,58,237,0.2); }
+.processing { background: rgba(245,158,11,0.12); color: var(--gold-400);   border: 1px solid rgba(245,158,11,0.2); }
+.completed  { background: rgba(16,185,129,0.12); color: var(--green-light); border: 1px solid rgba(16,185,129,0.2); }
+.expired    { background: rgba(239,68,68,0.12);  color: var(--red-light);  border: 1px solid rgba(239,68,68,0.2);  }
+
+/* Participating */
+.participating {
+  background: var(--bg-card); border: 1px solid rgba(16,185,129,0.2);
+  border-radius: var(--r-xl); padding: 1.25rem 1.75rem;
+  display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+}
+.partIcon { width: 44px; height: 44px; background: rgba(16,185,129,0.12); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; flex-shrink: 0; }
+.partInfo { flex: 1; min-width: 200px; }
+.partTitle { font-weight: 700; color: var(--green-light); font-size: 1rem; margin-bottom: 0.15rem; display: flex; align-items: center; gap: 0.4rem; }
+.partSub { font-size: 0.875rem; color: var(--text-muted); }
+.partSub span { font-weight: 700; color: var(--gold-400); }
+
+/* Non-winner */
+.nonWinner {
+  background: var(--bg-card); border: 1px solid var(--border-subtle);
+  border-radius: var(--r-xl); padding: 1.25rem 1.75rem;
+  display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+}
+.nonWinnerInfo { flex: 1; }
+.nonWinnerTitle { font-weight: 700; color: var(--text-primary); font-size: 1rem; margin-bottom: 0.2rem; }
+.nonWinnerSub { font-size: 0.875rem; color: var(--text-muted); }

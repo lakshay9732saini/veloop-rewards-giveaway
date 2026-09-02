@@ -1,0 +1,53 @@
+require('dotenv').config();
+const express  = require('express');
+const helmet   = require('helmet');
+const cors     = require('cors');
+const morgan   = require('morgan');
+const { generalLimiter } = require('./middleware/rateLimitMiddleware');
+const { errorHandler }   = require('./middleware/errorMiddleware');
+const giveawayRoutes     = require('./routes/giveawayRoutes');
+
+const app = express();
+
+// ── Security headers ──────────────────────────────────────────────────────────
+app.use(helmet());
+
+// ── CORS ──────────────────────────────────────────────────────────────────────
+// In production, replace with your actual frontend domain.
+const ALLOWED_ORIGINS = (process.env.CLIENT_URL || 'http://localhost:5173').split(',').map(s => s.trim());
+app.use(cors({
+  origin: (origin, callback) => {
+    // Allow no-origin (server-to-server) and allowed origins
+    if (!origin || ALLOWED_ORIGINS.includes(origin)) callback(null, true);
+    else callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true,
+}));
+
+// ── Logging ───────────────────────────────────────────────────────────────────
+if (process.env.NODE_ENV !== 'test') {
+  app.use(morgan('dev'));
+}
+
+// ── Body parsing ──────────────────────────────────────────────────────────────
+app.use(express.json({ limit: '10kb' }));
+app.use(express.urlencoded({ extended: false, limit: '10kb' }));
+
+// ── Global rate limiting ──────────────────────────────────────────────────────
+app.use(generalLimiter);
+
+// ── Health check ──────────────────────────────────────────────────────────────
+app.get('/health', (_req, res) => res.json({ status: 'ok', timestamp: new Date().toISOString() }));
+
+// ── API routes ────────────────────────────────────────────────────────────────
+app.use('/api/giveaways', giveawayRoutes);
+
+// ── 404 handler ───────────────────────────────────────────────────────────────
+app.use((req, res) => {
+  res.status(404).json({ success: false, error: 'NOT_FOUND', message: `Route ${req.method} ${req.path} not found.` });
+});
+
+// ── Centralized error handler ──────────────────────────────────────────────────
+app.use(errorHandler);
+
+module.exports = app;

@@ -1,0 +1,22 @@
+.section { padding: 2.5rem 0; background: var(--bg-base); }
+.header { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+.titleRow {}
+.sectionIcon { font-size: 1rem; margin-right: 0.35rem; }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.25rem;
+}
+.filterSelect {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text-primary) !important;
+  font-size: 0.8125rem;
+  padding: 0.4rem 0.875rem;
+  border-radius: var(--r-md);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+@media (max-width: 1100px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 576px)  { .grid { grid-template-columns: 1fr; } }
