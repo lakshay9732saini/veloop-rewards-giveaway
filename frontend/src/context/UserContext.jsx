@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import ADMIN_USER from '../config/adminUser';
 import { CURRENCY } from '../data/giveawayData';
+import { fetchUserBalance } from '../services/api';
 
 const UserContext = createContext();
 
@@ -18,6 +19,28 @@ export function UserProvider({ children }) {
     return { ...ADMIN_USER };
   });
 
+  // Fetch real-time balance from API on mount and periodically
+  useEffect(() => {
+    const loadBalance = async () => {
+      try {
+        const balance = await fetchUserBalance(user.id);
+        setUser(prev => ({
+          ...prev,
+          balance
+        }));
+      } catch (error) {
+        console.error('Failed to fetch balance:', error);
+      }
+    };
+
+    loadBalance();
+    
+    // Refresh balance every 30 seconds
+    const interval = setInterval(loadBalance, 30000);
+    
+    return () => clearInterval(interval);
+  }, [user.id]);
+
   // Save to localStorage when user changes
   useEffect(() => {
     localStorage.setItem('veloop_user_state', JSON.stringify(user));
@@ -32,6 +55,21 @@ export function UserProvider({ children }) {
         [currency]: (prev.balance[currency] || 0) - amount
       }
     }));
+  };
+
+  // Refresh balance from API
+  const refreshBalance = async () => {
+    try {
+      const balance = await fetchUserBalance(user.id);
+      setUser(prev => ({
+        ...prev,
+        balance
+      }));
+      return balance;
+    } catch (error) {
+      console.error('Failed to refresh balance:', error);
+      return null;
+    }
   };
 
   // Add participation
@@ -73,6 +111,7 @@ export function UserProvider({ children }) {
       user, 
       setUser, 
       updateBalance, 
+      refreshBalance,
       addParticipation,
       setWinner,
       resetUser 

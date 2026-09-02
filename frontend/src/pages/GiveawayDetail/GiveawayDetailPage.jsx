@@ -14,6 +14,7 @@ import GiveawayLoader from '../../components/GiveawayLoader/GiveawayLoader';
 import { fetchGiveawayBySlug, fetchUserBalance } from '../../services/api';
 import { GIVEAWAY_STATUS } from '../../data/giveawayData';
 import ADMIN_USER from '../../config/adminUser';
+import { useUser } from '../../context/UserContext';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 const fmt = (n) => (n ?? 0).toLocaleString();
@@ -62,6 +63,7 @@ function buildTerms(prize) {
 export default function GiveawayDetailPage() {
   const { slug }   = useParams();
   const navigate   = useNavigate();
+  const { refreshBalance } = useUser();
 
   const [giveaway,    setGiveaway]    = useState(null);
   const [prize,       setPrize]       = useState(null);
@@ -479,6 +481,8 @@ export default function GiveawayDetailPage() {
               // Refresh balance after successful join
               const balance = await fetchUserBalance(user.id);
               setUserBalance(balance);
+              // Also refresh global balance in context
+              await refreshBalance();
             }}
           />
         )}

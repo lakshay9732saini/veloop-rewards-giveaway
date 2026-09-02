@@ -1,92 +1,97 @@
 # 🎁 VELoop Rewards - Giveaway Platform
 
-A full-stack giveaway management platform built with **React + Express + MongoDB**.
+A full-stack giveaway management platform with **real-time balance tracking** built using **React + Express + MongoDB**.
 
-## 🚀 Features
+> **🚀 Live Demo:**  
+> Frontend: https://frontend-six-xi-50.vercel.app  
+> Backend: https://veloop-rewards-giveaway-two.vercel.app
 
-### ✨ User Features
-- 🎯 **Join Giveaways** - Participate in active giveaways with entry fees
-- 💰 **Real-time Balance** - VEs/SVEs/Tokens balance updates instantly
-- 🏆 **My Participations** - Track all joined giveaways in one place
-- 🎁 **Prize Claims** - Submit claim details for won prizes
-- ⏰ **Live Countdown** - Real-time countdown to giveaway end
-- 📊 **Participation Stats** - View total entries and prizes won
+---
+
+## ✨ Key Features
+
+### 🎯 User Experience
+- **Join Giveaways** - Participate in active prizes with VEs/SVEs/Tokens
+- **Real-Time Balance** - Navbar and detail page sync automatically every 30s
+- **My Participations** - Track all joined giveaways with entry fees
+- **Prize Claims** - Submit delivery details for won prizes
+- **Live Countdown** - Real-time countdown timer
+- **Insufficient Balance Warning** - Can't join if balance is low
+
+### 💎 Technical Highlights
+- ⚡ **React 18 + Vite** - Blazing fast development
+- 🎭 **Framer Motion** - Smooth animations
+- 🗄️ **MongoDB Atlas** - Cloud database with persistence
+- 🔄 **Real-Time Sync** - Balance updates across all components
+- 🔐 **Rate Limiting** - DDoS protection (10 req/min)
+- 📝 **Audit Logs** - Complete transaction history
+- 🎨 **Responsive Design** - Mobile-friendly glassmorphic UI
 
 ### 🛠️ Admin Features (Demo Mode)
-- 👤 **Admin User** - Pre-configured admin account (no login required)
-- 💳 **Balance: 1000 VEs** - Test with initial balance
-- ✅ **Join Multiple Prizes** - Participate in unlimited giveaways
-- 🎨 **Dark Theme UI** - Glassmorphic design with purple/gold accents
-
-### 🔧 Technical Features
-- ⚡ **React 18** with Vite for blazing-fast development
-- 🎭 **Framer Motion** animations for smooth UX
-- 🗄️ **MongoDB** for data persistence
-- 🔐 **Rate Limiting** to prevent abuse
-- 📝 **Audit Logs** for all transactions
-- 🎨 **Responsive Design** - Works on all devices
+- 👤 **Pre-configured Admin** - No login required
+- 💰 **Initial Balance** - 10,000 VEs / 5,000 SVEs / 50,000 Tokens
+- ✅ **Join Multiple Prizes** - Test unlimited entries
+- 📊 **Transaction History** - All actions logged in MongoDB
 
 ---
 
 ## 📦 Tech Stack
 
-### Frontend
-- **React 18** - UI library
-- **Vite** - Build tool
-- **Framer Motion** - Animations
-- **React Router** - Navigation
-- **Context API** - State management
-- **CSS Modules** - Scoped styling
-
-### Backend
-- **Express.js** - Web framework
-- **MongoDB** - Database
-- **Mongoose** - ODM
-- **Express Rate Limit** - DDoS protection
-- **UUID** - Unique IDs
+| Layer | Technology |
+|-------|-----------|
+| **Frontend** | React 18, Vite, Framer Motion, React Router, CSS Modules |
+| **Backend** | Express.js, Mongoose, Express Rate Limit |
+| **Database** | MongoDB Atlas (Cloud) |
+| **Deployment** | Vercel (Frontend + Backend) |
+| **Authentication** | Demo mode (no auth for testing) |
 
 ---
 
 ## 🚀 Quick Start
 
 ### Prerequisites
-- **Node.js** 18+ installed
-- **MongoDB** running locally or cloud
-- **Git** for version control
+```bash
+Node.js 18+
+MongoDB (local or Atlas)
+Git
+```
 
-### 1. Clone Repository
+### 1️⃣ Clone Repository
 ```bash
 git clone <your-repo-url>
 cd "VELoop Intership part 2"
 ```
 
-### 2. Backend Setup
+### 2️⃣ Backend Setup
 ```bash
 cd backend
 npm install
 
-# Create .env file (copy from .env.example)
-# Update MongoDB connection string
+# Create .env file
+MONGODB_URI=mongodb+srv://admin_admin:admin123@veloop.sw1whtf.mongodb.net/veloop_rewards
+PORT=5000
+NODE_ENV=development
 
 npm start
-# Server runs on http://localhost:5000
+# ✅ Server: http://localhost:5000
 ```
 
-### 3. Frontend Setup
+### 3️⃣ Frontend Setup
 ```bash
 cd frontend
 npm install
 
 # Create .env file
-# VITE_API_URL=http://localhost:5000
+VITE_API_URL=http://localhost:5000/api
 
 npm run dev
-# App runs on http://localhost:5173
+# ✅ App: http://localhost:5173
 ```
 
-### 4. Open Browser
-```
-http://localhost:5173
+### 4️⃣ Seed Database (First Time Only)
+```bash
+# POST request to seed data
+curl -X POST http://localhost:5000/api/seed/run
 ```
 
 ---
@@ -97,184 +102,151 @@ http://localhost:5173
 VELoop Intership part 2/
 ├── backend/
 │   ├── src/
-│   │   ├── config/         # Database config
-│   │   ├── controllers/    # Route handlers
-│   │   ├── middleware/     # Auth, rate limit, errors
-│   │   ├── models/         # MongoDB schemas
-│   │   ├── routes/         # API routes
-│   │   ├── services/       # Business logic
-│   │   ├── utils/          # Seed data
-│   │   └── validators/     # Input validation
+│   │   ├── config/           # Database connection
+│   │   ├── controllers/      # Route handlers (giveaway, claim, participation)
+│   │   ├── middleware/       # Auth, rate limit, error handling
+│   │   ├── models/           # Mongoose schemas
+│   │   │   ├── Giveaway.js
+│   │   │   ├── GiveawayParticipation.js
+│   │   │   ├── GiveawayEntryTransaction.js
+│   │   │   ├── PrizeClaim.js
+│   │   │   ├── UserBalance.js
+│   │   │   ├── AuditLog.js
+│   │   │   └── FraudEvent.js
+│   │   ├── routes/           # API routes
+│   │   ├── services/         # Business logic
+│   │   │   ├── balanceService.js    # Real-time balance from DB
+│   │   │   ├── giveawayService.js
+│   │   │   ├── participationService.js
+│   │   │   ├── winnerService.js
+│   │   │   └── fraudService.js
+│   │   ├── utils/            # Seed data
+│   │   └── validators/       # Input validation
 │   ├── .env.example
 │   ├── package.json
-│   └── server.js
+│   ├── server.js
+│   └── vercel.json
 │
 ├── frontend/
 │   ├── public/
-│   │   └── assets/         # Prize images
+│   │   └── assets/           # Prize images
 │   ├── src/
-│   │   ├── components/     # React components
-│   │   ├── config/         # Admin user config
-│   │   ├── context/        # Global state (UserContext)
-│   │   ├── data/           # Mock data
-│   │   ├── pages/          # Route pages
-│   │   ├── services/       # API calls
+│   │   ├── components/       # React components
+│   │   │   ├── Navbar/
+│   │   │   ├── GiveawayHero/
+│   │   │   ├── FeaturedGiveaways/
+│   │   │   ├── MyParticipations/
+│   │   │   ├── ConfirmJoinModal/
+│   │   │   ├── PrizeClaimModal/
+│   │   │   ├── Countdown/
+│   │   │   └── WinnersTabs/
+│   │   ├── config/           # Admin user config
+│   │   ├── context/          # UserContext (global state)
+│   │   ├── data/             # Constants & mock data
+│   │   ├── pages/            # Route pages
+│   │   │   ├── GiveawayPage/
+│   │   │   └── GiveawayDetail/
+│   │   ├── services/         # API calls
+│   │   │   └── api.js        # fetchUserBalance, joinGiveaway, etc.
 │   │   ├── App.jsx
 │   │   └── main.jsx
 │   ├── .env
 │   ├── package.json
-│   └── vite.config.js
+│   ├── vite.config.js
+│   └── vercel.json
 │
+├── vercel.json               # Root monorepo config
 ├── .gitignore
 └── README.md
 ```
 
 ---
 
-## 🎯 Key Features Explained
+## 🔄 How Balance Sync Works
 
-### 1. **Admin Mode (No Login)**
-- Pre-configured admin user: `ADMIN_USER`
-- Balance: 1000 VEs, 1500 SVEs, 5000 Tokens
-- No authentication required for demo
-- Can join unlimited giveaways
+### Problem
+❌ **Before:** Navbar showed 10,000 VEs, but detail page showed 9,750 VEs after joining a prize.
 
-### 2. **Real-Time Balance Updates**
+### Solution
+✅ **Now:** Real-time sync using `UserContext` + API polling.
+
 ```javascript
-// Join prize (50 VEs)
-Before: 🪙 1000 VE
-After:  🪙 950 VE  ✅ Instant update!
+// UserContext.jsx
+useEffect(() => {
+  const loadBalance = async () => {
+    const balance = await fetchUserBalance(user.id);
+    setUser(prev => ({ ...prev, balance }));
+  };
+
+  loadBalance(); // Load on mount
+  const interval = setInterval(loadBalance, 30000); // Refresh every 30s
+  
+  return () => clearInterval(interval);
+}, [user.id]);
 ```
 
-### 3. **My Participations Section**
-- Shows all joined giveaways
-- Entry fees and dates
-- Winner cards highlighted
-- Claim prize button
+**Flow:**
+1. User joins prize → Backend deducts balance → Saves to MongoDB
+2. Frontend calls `refreshBalance()` immediately after join
+3. UserContext updates → Navbar reflects new balance
+4. Background polling syncs every 30s automatically
 
-### 4. **Database Persistence**
-All actions saved to MongoDB:
-- `GiveawayParticipation` - User entries
-- `GiveawayEntryTransaction` - Balance deductions
-- `PrizeClaim` - Claim submissions
-- `AuditLog` - All actions logged
+**Result:**
+```
+Join iPhone (250 VEs)
+Before: 🪙 10,000 VE (Navbar) | 🪙 10,000 VE (Detail Page)
+After:  🪙 9,750 VE (Navbar)  | 🪙 9,750 VE (Detail Page) ✅ SYNCED!
+```
 
 ---
 
 ## 🛠️ API Endpoints
 
-### Public Endpoints
-```
-GET  /api/giveaways/current          # Current active giveaway
-GET  /api/giveaways/stats            # Platform statistics
-GET  /api/giveaways/previous         # Past giveaways
-GET  /api/giveaways/:id              # Giveaway by ID
-GET  /api/giveaways/:id/winners      # Winners list
-```
-
-### Participation (No Auth Required for Demo)
-```
-POST /api/giveaways/:id/join         # Join giveaway
-POST /api/giveaways/:id/claim        # Submit prize claim
-GET  /api/giveaways/:id/my-claim     # Get my claim
+### Giveaways
+```http
+GET  /api/giveaways/current              # Active giveaway
+GET  /api/giveaways/stats                # Platform stats
+GET  /api/giveaways/previous             # Past giveaways
+GET  /api/giveaways/:id                  # Giveaway by ID
+GET  /api/giveaways/:id/winners          # Winners list
 ```
 
----
+### Participation
+```http
+POST /api/giveaways/:id/join             # Join giveaway
+  Body: { giveawayId, prizeId }
+  Response: { success, participation, transaction }
 
-## 🎨 UI Components
-
-### Main Pages
-- **GiveawayPage** - Homepage with all sections
-- **GiveawayDetailPage** - Individual prize details
-
-### Key Components
-- **Navbar** - Balance display + user menu
-- **GiveawayHero** - Hero section with countdown
-- **FeaturedGiveaways** - Prize cards grid
-- **MyParticipations** - User entries tracking
-- **PrizeClaimModal** - Claim submission form
-- **ConfirmJoinModal** - Join confirmation
-- **WinnersTabs** - Current/previous winners
-- **Countdown** - Real-time timer
-
----
-
-## 🧪 Testing
-
-### Manual Testing
-```bash
-# 1. Start backend
-cd backend && npm start
-
-# 2. Start frontend
-cd frontend && npm run dev
-
-# 3. Test flow
-- Open http://localhost:5173
-- Check navbar: 1000 VE
-- Join iPhone prize (50 VEs)
-- ✅ Balance: 950 VE
-- Scroll to "My Participations"
-- ✅ See iPhone card
-- Join more prizes
-- ✅ All reflect instantly
+GET  /api/giveaways/:id/my-status        # My participation status
+POST /api/giveaways/:id/claim            # Submit prize claim
+GET  /api/giveaways/:id/my-claim         # Get my claim details
 ```
 
-### Database Verification
-```bash
-mongosh
-use veloop_rewards
-
-# Check participations
-db.giveawayparticipations.find({ userId: 'ADMIN_USER' }).pretty()
-
-# Check transactions
-db.giveawayentrytransactions.find({ userId: 'ADMIN_USER' }).pretty()
-
-# Check balance
-db.auditlogs.find({ userId: 'ADMIN_USER', action: 'JOIN_GIVEAWAY' })
-```
-
----
-
-## 🚀 Deployment
-
-### Vercel (Frontend)
-```bash
-# Install Vercel CLI
-npm i -g vercel
-
-# Deploy
-cd frontend
-vercel
-
-# Production
-vercel --prod
-```
-
-### Backend Deployment Options
-1. **Railway** - Automatic MongoDB included
-2. **Render** - Free tier available
-3. **Heroku** - Classic option
-4. **DigitalOcean** - VPS with full control
-
-### Environment Variables
-
-**Frontend (.env):**
-```env
-VITE_API_URL=https://your-backend-url.com
-```
-
-**Backend (.env):**
-```env
-MONGODB_URI=mongodb+srv://user:pass@cluster.mongodb.net/veloop_rewards
-PORT=5000
-NODE_ENV=production
+### Balance
+```http
+GET  /api/balance/:userId                # Get user balance
+  Response: { 
+    userId: "ADMIN_USER",
+    balance: { VEs: 9750, SVEs: 5000, Tokens: 50000 }
+  }
 ```
 
 ---
 
 ## 📊 Database Schema
+
+### UserBalance (Real-Time Balance)
+```javascript
+{
+  userId: 'ADMIN_USER',
+  balance: {
+    VEs: 9750,
+    SVEs: 5000,
+    Tokens: 50000
+  },
+  lastUpdated: Date
+}
+```
 
 ### GiveawayParticipation
 ```javascript
@@ -282,24 +254,25 @@ NODE_ENV=production
   userId: 'ADMIN_USER',
   giveawayId: 'GW-2026-09',
   prizeId: 'PRIZE-001',
-  entryFee: 50,
+  entryFee: 250,
   entryCurrency: 'VEs',
   status: 'ACTIVE',
   joinedAt: Date
 }
 ```
 
-### GiveawayEntryTransaction
+### GiveawayEntryTransaction (Audit Trail)
 ```javascript
 {
   transactionId: 'TXN-abc123',
   userId: 'ADMIN_USER',
   type: 'DEBIT',
-  amount: 50,
+  amount: 250,
   currency: 'VEs',
-  balanceBefore: 1000,
-  balanceAfter: 950,
-  status: 'SUCCESS'
+  balanceBefore: 10000,
+  balanceAfter: 9750,
+  status: 'SUCCESS',
+  timestamp: Date
 }
 ```
 
@@ -311,88 +284,189 @@ NODE_ENV=production
   giveawayId: 'GW-2026-09',
   prizeId: 'PRIZE-002',
   deliveryDetails: {
-    fullName: '...',
-    phone: '...',
-    address: '...'
+    fullName: 'Admin User',
+    phone: '+91 9876543210',
+    address: 'Mumbai, India',
+    pincode: '400001'
   },
-  status: 'SUBMITTED'
+  status: 'SUBMITTED',
+  submittedAt: Date
 }
+```
+
+---
+
+## 🧪 Testing Guide
+
+### 1️⃣ Balance Sync Test
+```bash
+# Open https://frontend-six-xi-50.vercel.app
+# Step 1: Check navbar - should show current balance (e.g., 9,750 VE)
+# Step 2: Click "View Details" on any prize
+# Step 3: Detail page should show SAME balance (9,750 VE)
+# Step 4: Join prize (deducts 250 VEs)
+# Step 5: Both navbar AND detail page show 9,500 VE ✅
+```
+
+### 2️⃣ Insufficient Balance Test
+```bash
+# Join expensive prizes until balance < entry fee
+# Try joining another prize
+# Should show "Insufficient Balance" warning ❌
+# Join button disabled
+```
+
+### 3️⃣ Database Verification
+```bash
+# Connect to MongoDB Atlas
+mongosh "mongodb+srv://admin_admin:admin123@veloop.sw1whtf.mongodb.net/veloop_rewards"
+
+# Check user balance
+db.userbalances.findOne({ userId: "ADMIN_USER" })
+
+# Check participations
+db.giveawayparticipations.find({ userId: "ADMIN_USER" })
+
+# Check transactions
+db.giveawayentrytransactions.find({ userId: "ADMIN_USER" }).sort({ timestamp: -1 })
+
+# Check audit logs
+db.auditlogs.find({ userId: "ADMIN_USER", action: "JOIN_GIVEAWAY" })
 ```
 
 ---
 
 ## 🎨 Design System
 
-### Colors
-- **Purple** - `#7C3AED` - Primary brand
-- **Gold** - `#F59E0B` - Premium accents
-- **Emerald** - `#10B981` - Success states
-- **Rose** - `#F43F5E` - Errors/warnings
-- **Indigo** - `#6366F1` - Info/links
+### Color Palette
+```css
+--purple-600: #7C3AED;    /* Primary brand */
+--gold-500: #F59E0B;      /* Premium accents */
+--emerald-500: #10B981;   /* Success states */
+--rose-500: #F43F5E;      /* Errors/warnings */
+--indigo-500: #6366F1;    /* Info/links */
+```
 
 ### Typography
-- **Display** - Inter (headings)
-- **Body** - System fonts (content)
+- **Headings:** Inter, system-ui
+- **Body:** -apple-system, BlinkMacSystemFont
 
-### Spacing
-- Base: 4px grid system
-- Padding: 0.5rem to 4rem
-- Gaps: 0.5rem to 2rem
+### Components
+- **Glassmorphism:** backdrop-blur with semi-transparent backgrounds
+- **Animations:** Framer Motion for smooth transitions
+- **Icons:** Lucide React
+
+---
+
+## 🚀 Deployment
+
+### Frontend (Vercel)
+```bash
+cd frontend
+vercel --prod
+
+# Environment Variables (Vercel Dashboard)
+VITE_API_URL=https://veloop-rewards-giveaway-two.vercel.app/api
+```
+
+### Backend (Vercel)
+```bash
+cd backend
+vercel --prod
+
+# Environment Variables (Vercel Dashboard)
+MONGODB_URI=mongodb+srv://admin_admin:admin123@veloop.sw1whtf.mongodb.net/veloop_rewards
+NODE_ENV=production
+PORT=5000
+JWT_SECRET=your_jwt_secret
+REFRESH_SECRET=your_refresh_secret
+CLIENT_URL=https://frontend-six-xi-50.vercel.app
+```
+
+### Monorepo Config (Root vercel.json)
+```json
+{
+  "buildCommand": "cd frontend && npm run build",
+  "outputDirectory": "frontend/dist",
+  "installCommand": "cd frontend && npm install"
+}
+```
 
 ---
 
 ## 🔐 Security Features
 
 ### Backend
-- ✅ Rate limiting (10 requests/min)
-- ✅ Input validation
+- ✅ Rate limiting (10 req/min per IP)
+- ✅ Input validation (express-validator)
 - ✅ MongoDB injection protection
 - ✅ CORS enabled
 - ✅ Error handling middleware
-- ✅ Audit logging
+- ✅ Audit logging for all transactions
 
 ### Frontend
 - ✅ XSS prevention (React auto-escaping)
 - ✅ CSRF protection
-- ✅ Secure API calls
 - ✅ No sensitive data in localStorage
+- ✅ API calls through secure service layer
 
 ---
 
-## 📝 TODO / Future Enhancements
+## 📝 Known Issues & Fixes
+
+### ✅ Fixed: Balance Mismatch
+**Issue:** Navbar shows 10,000 VE but detail page shows 9,750 VE  
+**Fix:** Added real-time API polling (30s) + immediate refresh after join
+
+### ✅ Fixed: UUID ESM Error
+**Issue:** `uuid` package causing Vercel serverless error  
+**Fix:** Replaced with `crypto.randomUUID()` (Node.js built-in)
+
+### ✅ Fixed: Vercel Deploy Failure
+**Issue:** GitHub auto-deploy failing with `ENOENT package.json`  
+**Fix:** Created root `vercel.json` with monorepo config
+
+### ✅ Fixed: MongoDB Connection Error
+**Issue:** Invalid scheme error on Vercel  
+**Fix:** Updated `MONGODB_URI` env variable with correct connection string
+
+---
+
+## 🎯 Future Enhancements
 
 ### Features
-- [ ] Real authentication system
-- [ ] Email notifications
-- [ ] Payment gateway integration
-- [ ] Admin dashboard
-- [ ] Analytics charts
-- [ ] Social sharing
-- [ ] Multi-language support
+- [ ] Real authentication (JWT + refresh tokens)
+- [ ] Email notifications for winners
+- [ ] Payment gateway (Razorpay/Stripe)
+- [ ] Admin dashboard with analytics
+- [ ] Social media sharing
+- [ ] Multi-language support (i18n)
+- [ ] Push notifications
 
 ### Technical
-- [ ] Unit tests (Jest)
+- [ ] Unit tests (Vitest)
 - [ ] E2E tests (Playwright)
-- [ ] CI/CD pipeline
-- [ ] Docker containers
-- [ ] Redis caching
+- [ ] CI/CD pipeline (GitHub Actions)
+- [ ] Docker containerization
+- [ ] Redis caching for balance
 - [ ] WebSocket for live updates
+- [ ] TypeScript migration
 
 ---
 
 ## 🤝 Contributing
 
 1. Fork the repository
-2. Create feature branch (`git checkout -b feature/amazing`)
-3. Commit changes (`git commit -m 'Add amazing feature'`)
-4. Push to branch (`git push origin feature/amazing`)
+2. Create feature branch: `git checkout -b feature/amazing-feature`
+3. Commit changes: `git commit -m 'Add amazing feature'`
+4. Push to branch: `git push origin feature/amazing-feature`
 5. Open Pull Request
 
 ---
 
 ## 📄 License
 
-This project is for educational/internship purposes.
+This project is for **educational/internship purposes**.
 
 ---
 
@@ -404,10 +478,10 @@ Built during **VELoop Internship Part 2**
 
 ## 🎉 Acknowledgments
 
-- **VELoop Team** - For the opportunity
-- **React** - Amazing UI library
-- **MongoDB** - Flexible database
-- **Vercel** - Easy deployment
+- **VELoop Team** - For the internship opportunity
+- **React** - Powerful UI library
+- **MongoDB Atlas** - Reliable cloud database
+- **Vercel** - Seamless deployment platform
 
 ---
 
@@ -416,13 +490,8 @@ Built during **VELoop Internship Part 2**
 For questions or issues:
 - 📧 Email: support@veloop.com
 - 🐛 Issues: GitHub Issues tab
+- 📚 Docs: This README
 
 ---
 
 **Happy Coding!** 🚀✨
-#   U p d a t e d   M o n g o D B   c r e d e n t i a l s  
- 
- #   F r o n t e n d   d e p l o y e d  
- 
- #   F r o n t e n d   e n v i r o n m e n t   c o n f i g u r e d  
- 
