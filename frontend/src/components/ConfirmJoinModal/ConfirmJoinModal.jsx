@@ -64,7 +64,7 @@ export default function ConfirmJoinModal({ prize, giveaway, onClose, onSuccess }
           onSuccess && onSuccess();
         }, 1500);
       } else {
-        setError(apiErrors[res.error] || apiErrors.UNKNOWN_ERROR);
+        setError(apiErrors[res.error] || res.message || apiErrors.UNKNOWN_ERROR);
       }
     } catch (err) {
       console.error('Join giveaway error:', err);

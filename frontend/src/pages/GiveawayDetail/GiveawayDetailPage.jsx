@@ -82,8 +82,10 @@ export default function GiveawayDetailPage() {
     try {
       const gRes = await fetchGiveawayBySlug(slug);
       if (!gRes.success) { setError('This giveaway could not be found.'); return; }
+      const resolvedPrize = gRes.data.prizes?.find((item) => item.slug === slug) ?? gRes.data.prize;
       setGiveaway(gRes.data);
-      setPrize(gRes.data.prize ?? null);
+      setPrize(resolvedPrize ?? null);
+      setImageError(false);
       setMyStatus(null);
     } catch {
       setError("We couldn't load this giveaway. Please try again.");
