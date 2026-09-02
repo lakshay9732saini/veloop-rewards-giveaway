@@ -11,7 +11,9 @@ export function UserProvider({ children }) {
     const stored = localStorage.getItem('veloop_user_state');
     if (stored) {
       try {
-        return JSON.parse(stored);
+        const parsedUser = JSON.parse(stored);
+        // Keep user data but DON'T trust cached balance
+        return { ...parsedUser, balance: ADMIN_USER.balance };
       } catch (e) {
         console.error('Failed to parse user state:', e);
       }
