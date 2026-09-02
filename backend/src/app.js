@@ -36,7 +36,16 @@ app.use(express.urlencoded({ extended: false, limit: '10kb' }));
 // ── Global rate limiting ──────────────────────────────────────────────────────
 app.use(generalLimiter);
 
-// ── Health check ──────────────────────────────────────────────────────────────
+// ── Root & Health check ───────────────────────────────────────────────────────
+app.get('/', (_req, res) => res.json({ 
+  success: true, 
+  message: 'VELOOP Rewards API is running', 
+  version: '1.0.0',
+  endpoints: {
+    health: '/health',
+    giveaways: '/api/giveaways'
+  }
+}));
 app.get('/health', (_req, res) => res.json({ status: 'ok', timestamp: new Date().toISOString() }));
 
 // ── API routes ────────────────────────────────────────────────────────────────
