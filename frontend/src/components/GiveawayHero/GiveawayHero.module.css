@@ -152,13 +152,14 @@
 }
 .statsGrid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   border-left: 1px solid var(--border-subtle);
 }
 .statItem {
   padding: 1.125rem 1.5rem;
   border-right: 1px solid var(--border-subtle);
   display: flex; align-items: center; gap: 0.875rem;
+  min-width: 0;
 }
 .statIcon {
   width: 42px; height: 42px;
@@ -167,7 +168,7 @@
   font-size: 1.1rem;
   flex-shrink: 0;
 }
-.statInfo {}
+.statInfo { min-width: 0; }
 .statLabel { font-size: 0.75rem; color: var(--text-muted); font-weight: 500; margin-bottom: 0.1rem; }
 .statValue {
   font-family: var(--font-display);
@@ -179,6 +180,8 @@
 /* Countdown in stats */
 .countdownInline {
   display: flex; align-items: baseline; gap: 0.15rem;
+  min-width: 0;
+  max-width: 100%;
 }
 .cUnit {
   display: flex; flex-direction: column; align-items: center; min-width: 28px;
@@ -206,5 +209,11 @@
   .hero { padding: 2rem 0 1.5rem; }
   .statsGrid { grid-template-columns: repeat(2, 1fr); }
   .statItem { padding: 0.875rem 1rem; }
+  .statItem { gap: 0.5rem; }
   .statValue { font-size: 1rem; }
+}
+
+@media (max-width: 400px) {
+  .statsGrid { grid-template-columns: 1fr; }
+  .statItem { justify-content: center; }
 }

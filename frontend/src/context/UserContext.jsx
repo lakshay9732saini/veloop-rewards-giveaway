@@ -6,9 +6,22 @@ const UserContext = createContext();
 
 export function UserProvider({ children }) {
   const [user, setUser] = useState(() => {
-    // Always start with ADMIN_USER defaults, never trust cached balance
-    return { ...ADMIN_USER };
+    const cachedBalance = localStorage.getItem('veloop_balance');
+    let balance = ADMIN_USER.balance;
+    try {
+      const parsedBalance = cachedBalance ? JSON.parse(cachedBalance) : null;
+      if (parsedBalance && typeof parsedBalance === 'object') {
+        balance = { ...balance, ...parsedBalance };
+      }
+    } catch {
+      localStorage.removeItem('veloop_balance');
+    }
+    return { ...ADMIN_USER, balance };
   });
+
+  const saveBalance = (balance) => {
+    localStorage.setItem('veloop_balance', JSON.stringify(balance));
+  };
 
   // Track if we are currently fetching to avoid race conditions
   const isFetchingRef = useRef(false);
@@ -25,6 +38,7 @@ export function UserProvider({ children }) {
       // Only apply if this is still the latest request
       if (balance && version === balanceVersionRef.current) {
         setUser(prev => ({ ...prev, balance }));
+        saveBalance(balance);
       }
     } catch (error) {
       console.error('Failed to fetch balance:', error);
@@ -48,6 +62,7 @@ export function UserProvider({ children }) {
       const balance = await fetchUserBalance(ADMIN_USER.id);
       if (balance && version === balanceVersionRef.current) {
         setUser(prev => ({ ...prev, balance }));
+        saveBalance(balance);
         return balance;
       }
     } catch (error) {
@@ -70,13 +85,14 @@ export function UserProvider({ children }) {
 
   // Update balance locally (immediate UI feedback, then refreshBalance confirms)
   const updateBalance = (currency, amount) => {
-    setUser(prev => ({
-      ...prev,
-      balance: {
+    setUser(prev => {
+      const balance = {
         ...prev.balance,
         [currency]: Math.max(0, (prev.balance?.[currency] || 0) - amount)
-      }
-    }));
+      };
+      saveBalance(balance);
+      return { ...prev, balance };
+    });
   };
 
   const setWinner = (wonPrize) => {
@@ -86,6 +102,7 @@ export function UserProvider({ children }) {
   const resetUser = () => {
     setUser({ ...ADMIN_USER });
     localStorage.removeItem('veloop_user_state');
+    localStorage.removeItem('veloop_balance');
   };
 
   return (

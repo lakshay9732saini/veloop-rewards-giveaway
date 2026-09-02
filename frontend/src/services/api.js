@@ -176,12 +176,7 @@ export async function joinGiveaway(giveawayId, prizeId) {
     return res;
   } catch (error) {
     console.error('[API] Join giveaway error:', error);
-    // Fallback to demo mode
-    return {
-      success: true,
-      data: { participationId: 'PART-DEMO-' + Date.now(), giveawayId, message: "You're in!" },
-      _mock: true,
-    };
+    return { success: false, error: 'NETWORK_ERROR', message: 'Unable to connect to the server.' };
   }
 }
 
