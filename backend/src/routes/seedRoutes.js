@@ -3,6 +3,7 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const Giveaway = require('../models/Giveaway');
 const GiveawayWinner = require('../models/GiveawayWinner');
+const UserBalance = require('../models/UserBalance');
 
 // Asset paths
 const ASSETS = {
@@ -272,16 +273,28 @@ router.post('/run', async (req, res) => {
     // Clear and insert
     await Giveaway.deleteMany({});
     await GiveawayWinner.deleteMany({});
+    await UserBalance.deleteMany({});
     
     await Giveaway.insertMany(giveaways);
     await GiveawayWinner.insertMany(winners);
+
+    // Create demo user balances
+    const demoUsers = [
+      { userId: 'ADMIN_USER', displayId: 'ADMIN', VEs: 10000, SVEs: 5000, Tokens: 50000 },
+      { userId: 'VE_DEMO_01', displayId: 'VE****01', VEs: 5000, SVEs: 2000, Tokens: 10000 },
+      { userId: 'VE_DEMO_02', displayId: 'VE****02', VEs: 3000, SVEs: 1500, Tokens: 8000 },
+      { userId: 'VE_DEMO_03', displayId: 'VE****03', VEs: 2000, SVEs: 1000, Tokens: 5000 },
+    ];
+    
+    await UserBalance.insertMany(demoUsers);
 
     res.json({
       success: true,
       message: 'Database seeded successfully',
       data: {
         giveaways: giveaways.length,
-        winners: winners.length
+        winners: winners.length,
+        users: demoUsers.length,
       }
     });
   } catch (error) {

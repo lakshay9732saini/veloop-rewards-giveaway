@@ -2,22 +2,9 @@
  * balanceService.js
  *
  * Manages user wallet balance operations.
- *
- * IMPORTANT: This is a stub implementation for the giveaway module.
- * In production, this service should integrate with the authoritative
- * VELOOP Rewards wallet/balance system.
- *
- * The getBalance and deductBalance functions are the integration points
- * to connect with the real balance backend.
  */
 
-// ── Mock balances (replace with real DB queries) ──────────────────────────────
-// Maps userId -> { VEs, SVEs, Tokens }
-const mockBalances = {
-  'VE10025': { VEs: 850, SVEs: 1200, Tokens: 3500 },
-  'VE10026': { VEs: 100, SVEs: 200, Tokens: 500 },
-  'ADMIN_USER': { VEs: 1000, SVEs: 1500, Tokens: 5000 }, // Admin demo user
-};
+const UserBalance = require('../models/UserBalance');
 
 /**
  * Get user's current balance for a specific currency.
@@ -26,8 +13,7 @@ const mockBalances = {
  * @returns {number}
  */
 async function getBalance(userId, currency) {
-  // Real: query the user wallet from DB
-  const wallet = mockBalances[userId];
+  const wallet = await UserBalance.findOne({ userId });
   if (!wallet) return 0;
   return wallet[currency] || 0;
 }
@@ -52,22 +38,46 @@ async function checkBalance(userId, currency, required) {
  * @returns {{ balanceBefore, balanceAfter }}
  */
 async function deductBalance(session, userId, currency, amount) {
-  const balanceBefore = await getBalance(userId, currency);
+  const wallet = await UserBalance.findOne({ userId });
+  
+  if (!wallet) {
+    throw new Error('WALLET_NOT_FOUND');
+  }
+
+  const balanceBefore = wallet[currency] || 0;
 
   if (balanceBefore < amount) {
-    throw new Error(`INSUFFICIENT_${currency.toUpperCase().replace('ES', '_BALANCE').replace('OKENS', '_BALANCE')}`);
+    throw new Error(`INSUFFICIENT_${currency.toUpperCase()}_BALANCE`);
   }
 
-  // Real: atomic $inc update inside the mongoose session
-  // await User.findOneAndUpdate({ _id: userId }, { $inc: { [`wallet.${currency}`]: -amount } }, { session });
+  // Atomic update with session
+  const update = { $inc: {} };
+  update.$inc[currency] = -amount;
+  
+  await UserBalance.findOneAndUpdate(
+    { userId },
+    update,
+    { session, new: true }
+  );
+
   const balanceAfter = balanceBefore - amount;
-
-  // Mock update
-  if (mockBalances[userId]) {
-    mockBalances[userId][currency] = balanceAfter;
-  }
 
   return { balanceBefore, balanceAfter };
 }
 
-module.exports = { getBalance, checkBalance, deductBalance };
+/**
+ * Get complete wallet balance for a user
+ */
+async function getWalletBalance(userId) {
+  const wallet = await UserBalance.findOne({ userId });
+  if (!wallet) {
+    return { VEs: 0, SVEs: 0, Tokens: 0 };
+  }
+  return {
+    VEs: wallet.VEs || 0,
+    SVEs: wallet.SVEs || 0,
+    Tokens: wallet.Tokens || 0,
+  };
+}
+
+module.exports = { getBalance, checkBalance, deductBalance, getWalletBalance };
