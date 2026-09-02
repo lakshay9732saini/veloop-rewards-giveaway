@@ -73,7 +73,7 @@ export default function GiveawayDetailPage() {
   const [showConfirm, setShowConfirm] = useState(false);
   const [joined,      setJoined]      = useState(false);
   const [imageError,  setImageError]  = useState(false);
-  const [userBalance, setUserBalance] = useState(ADMIN_USER.balance); // Real balance from API
+  const [userBalance, setUserBalance] = useState(null); // Real balance from API (null initially)
 
   const user       = ADMIN_USER; // Use centralized admin user
   const isLoggedIn = true; // Always logged in as admin
