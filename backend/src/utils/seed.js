@@ -283,7 +283,7 @@ const winners = [
 async function seed() {
   try {
     console.log('[SEED] Connecting to MongoDB...');
-    await mongoose.connect(process.env.MONGO_URI);
+    await mongoose.connect(process.env.MONGODB_URI);
     console.log('[SEED] Connected.');
 
     // Clear existing data
