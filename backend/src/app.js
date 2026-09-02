@@ -51,10 +51,8 @@ app.get('/health', (_req, res) => res.json({ status: 'ok', timestamp: new Date()
 // ── API routes ────────────────────────────────────────────────────────────────
 app.use('/api/giveaways', giveawayRoutes);
 app.use('/api/balance', require('./routes/balanceRoutes'));
-// Seed route (disabled in production for security)
-if (process.env.NODE_ENV !== 'production') {
-  app.use('/api/seed', require('./routes/seedRoutes'));
-}
+// Seed route (temporarily enabled for initial setup)
+app.use('/api/seed', require('./routes/seedRoutes'));
 
 // ── 404 handler ───────────────────────────────────────────────────────────────
 app.use((req, res) => {
