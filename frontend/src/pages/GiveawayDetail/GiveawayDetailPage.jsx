@@ -479,10 +479,11 @@ export default function GiveawayDetailPage() {
             onSuccess={async () => { 
               setJoined(true); 
               setShowConfirm(false); 
-              // Refresh balance after successful join
+              // Small delay to let DB write complete, then fetch real balance
+              await new Promise(r => setTimeout(r, 800));
               const balance = await fetchUserBalance(user.id);
-              setUserBalance(balance);
-              // Also refresh global balance in context
+              if (balance) setUserBalance(balance);
+              // Also refresh global navbar balance
               await refreshBalance();
             }}
           />
