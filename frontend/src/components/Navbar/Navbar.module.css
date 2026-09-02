@@ -150,10 +150,131 @@
 }
 .backLink:hover { color: var(--text-primary); background: rgba(255,255,255,0.06); }
 
+/* Hamburger menu (hidden on desktop) */
+.hamburger {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: var(--r-sm);
+  transition: all var(--t-fast);
+}
+
+.hamburger:hover {
+  background: rgba(255,255,255,0.06);
+}
+
+/* Mobile Menu */
+.mobileMenuContainer {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: rgba(7, 5, 26, 0.98);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-subtle);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+  z-index: 999;
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.mobileMenu {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.mobileNavLink {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  padding: 0.75rem 1rem;
+  border-radius: var(--r-md);
+  transition: all var(--t-fast);
+  text-decoration: none;
+  border: 1px solid transparent;
+}
+
+.mobileNavLink:hover {
+  color: var(--text-primary);
+  background: rgba(255,255,255,0.06);
+  border-color: rgba(124, 58, 237, 0.3);
+}
+
+.mobileNavLinkActive {
+  color: var(--purple-300) !important;
+  background: rgba(124, 58, 237, 0.1);
+  border-color: rgba(124, 58, 237, 0.3);
+}
+
 @media (max-width: 768px) {
   .navLinks { display: none; }
   .brandSub { display: none; }
+  .hamburger { display: block; }
+  .mobileMenuContainer { display: block; }
+  
+  /* Make balance text shorter on tablet */
+  .balanceText::after {
+    content: ' VE';
+  }
 }
+
+@media (max-width: 640px) {
+  .balance {
+    padding: 0.35rem 0.625rem;
+    font-size: 0.8125rem;
+  }
+  
+  .coinIcon {
+    width: 16px;
+    height: 16px;
+    font-size: 0.55rem;
+  }
+  
+  .avatar {
+    width: 32px;
+    height: 32px;
+    font-size: 0.7rem;
+  }
+}
+
 @media (max-width: 480px) {
-  .balance { display: none; }
+  .nav {
+    padding: 0.625rem 0;
+  }
+  
+  .logoMark {
+    width: 32px;
+    height: 32px;
+    font-size: 0.75rem;
+  }
+  
+  .brandName {
+    font-size: 0.9rem;
+  }
+  
+  .balance {
+    gap: 0.3rem;
+    padding: 0.3rem 0.5rem;
+  }
+  
+  .balanceText {
+    font-size: 0.75rem;
+  }
 }
