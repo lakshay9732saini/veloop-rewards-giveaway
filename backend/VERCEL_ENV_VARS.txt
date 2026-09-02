@@ -1,0 +1,131 @@
+═══════════════════════════════════════════════════════════════
+🔐 VERCEL ENVIRONMENT VARIABLES - UPDATED
+═══════════════════════════════════════════════════════════════
+
+Add these to: https://vercel.com/lakshay7093s-projects/backend/settings/environment-variables
+
+═══════════════════════════════════════════════════════════════
+Variable 1: MONGODB_URI
+═══════════════════════════════════════════════════════════════
+
+Name: MONGODB_URI
+
+Value: mongodb+srv://lakshay9732saini_db_user:F2HXeFIvpm4vb2FM@veloop.sw1whtf.mongodb.net/veloop_rewards?retryWrites=true&w=majority&appName=VEloop
+
+Environments: 
+☑ Production
+☑ Preview
+☑ Development
+
+═══════════════════════════════════════════════════════════════
+Variable 2: PORT
+═══════════════════════════════════════════════════════════════
+
+Name: PORT
+
+Value: 5000
+
+Environments:
+☑ Production
+☑ Preview
+☑ Development
+
+═══════════════════════════════════════════════════════════════
+Variable 3: NODE_ENV
+═══════════════════════════════════════════════════════════════
+
+Name: NODE_ENV
+
+Value: production
+
+Environments:
+☑ Production
+
+═══════════════════════════════════════════════════════════════
+Variable 4: CLIENT_URL
+═══════════════════════════════════════════════════════════════
+
+Name: CLIENT_URL
+
+Value: https://frontend-six-rho-14.vercel.app
+
+Environments:
+☑ Production
+☑ Preview
+☑ Development
+
+═══════════════════════════════════════════════════════════════
+Variable 5: JWT_SECRET (Optional for demo)
+═══════════════════════════════════════════════════════════════
+
+Name: JWT_SECRET
+
+Value: veloop_rewards_jwt_secret_production_2026
+
+Environments:
+☑ Production
+
+═══════════════════════════════════════════════════════════════
+Variable 6: REFRESH_SECRET (Optional for demo)
+═══════════════════════════════════════════════════════════════
+
+Name: REFRESH_SECRET
+
+Value: veloop_rewards_refresh_secret_production_2026
+
+Environments:
+☑ Production
+
+═══════════════════════════════════════════════════════════════
+🎯 QUICK STEPS
+═══════════════════════════════════════════════════════════════
+
+1. Open: https://vercel.com/lakshay7093s-projects/backend/settings/environment-variables
+
+2. Click "Add New" for each variable above
+
+3. Copy-paste Name and Value
+
+4. Select environments
+
+5. Click "Save"
+
+6. After adding all, go to Deployments and click "Redeploy"
+
+═══════════════════════════════════════════════════════════════
+✅ CRITICAL VARIABLES (Must Add)
+═══════════════════════════════════════════════════════════════
+
+1. MONGODB_URI - Database connection ✅
+2. PORT - Server port ✅
+3. NODE_ENV - Environment mode ✅
+4. CLIENT_URL - Frontend URL ✅
+
+Optional (for future auth):
+5. JWT_SECRET
+6. REFRESH_SECRET
+
+═══════════════════════════════════════════════════════════════
+📝 MONGODB NETWORK ACCESS
+═══════════════════════════════════════════════════════════════
+
+Don't forget:
+1. Go to: https://cloud.mongodb.com
+2. Network Access → Add IP Address
+3. Allow Access from Anywhere: 0.0.0.0/0
+4. Confirm and wait 2 minutes
+
+═══════════════════════════════════════════════════════════════
+🔄 AFTER ADDING VARIABLES
+═══════════════════════════════════════════════════════════════
+
+Redeploy Backend:
+cd "e:\VELoop Intership part 2\backend"
+vercel --prod
+
+Test Backend:
+https://backend-tau-weld-97.vercel.app/api/giveaways/current
+
+Should return JSON! ✅
+
+═══════════════════════════════════════════════════════════════

@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
 
 async function connectDB() {
-  const uri = process.env.MONGO_URI;
+  const uri = process.env.MONGODB_URI || process.env.MONGO_URI;
   if (!uri) {
-    console.warn('[DB] MONGO_URI not set — running without database.');
+    console.warn('[DB] MONGODB_URI not set — running without database.');
     return;
   }
   try {
