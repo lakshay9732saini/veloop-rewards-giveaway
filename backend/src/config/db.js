@@ -11,7 +11,7 @@ async function connectDB() {
     console.log('[DB] MongoDB connected');
   } catch (err) {
     console.error('[DB] Connection error:', err.message);
-    process.exit(1);
+    throw err; // Throw error instead of exit for serverless
   }
 }
 
