@@ -1,5 +1,6 @@
 .nav {
   position: sticky; top: 0; z-index: var(--z-nav);
+  isolation: isolate;
   background: rgba(7, 5, 26, 0.94);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
@@ -179,6 +180,9 @@
   border-bottom: 1px solid var(--border-subtle);
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
   z-index: 999;
+  max-height: calc(100dvh - 4.5rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
   animation: slideDown 0.2s ease-out;
 }
 

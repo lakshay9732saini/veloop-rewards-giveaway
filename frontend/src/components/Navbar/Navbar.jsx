@@ -133,8 +133,14 @@ export default function Navbar({ showBack = false, backLabel = 'Giveaway Home' }
 
             {/* Hamburger Menu (Mobile) */}
             <button 
+              type="button"
               className={styles.hamburger}
-              onClick={() => setShowMobileMenu(!showMobileMenu)}
+              aria-expanded={showMobileMenu}
+              aria-controls="mobile-navigation-menu"
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowMobileMenu((isOpen) => !isOpen);
+              }}
               aria-label="Toggle menu"
             >
               {showMobileMenu ? <X size={24} /> : <Menu size={24} />}
@@ -146,7 +152,7 @@ export default function Navbar({ showBack = false, backLabel = 'Giveaway Home' }
 
       {/* Mobile Menu */}
       {showMobileMenu && (
-        <div className={styles.mobileMenuContainer}>
+        <div id="mobile-navigation-menu" className={styles.mobileMenuContainer}>
           <div className={styles.mobileMenu}>
             {NAV_LINKS.map((l) => {
               if (l.isHash) {
