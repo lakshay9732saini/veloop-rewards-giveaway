@@ -15,8 +15,8 @@ const Giveaway = require('../models/Giveaway');
 const ASSETS = {
   iphone:     '/assets/ChatGPT Image Aug 19, 2026, 01_49_05 PM.png',
   watch:      '/assets/ChatGPT Image Aug 19, 2026, 01_55_25 PM.png',
-  airpods:    '/assets/ChatGPT Image Aug 19, 2026, 03_22_24 PM.png',
-  amazon2000: '/assets/ChatGPT Image Aug 19, 2026, 02_06_07 PM.png',
+  airpods:    '/assets/ChatGPT Image Aug 19, 2026, 02_06_07 PM.png',
+  amazon2000: '/assets/ChatGPT Image Aug 19, 2026, 03_22_24 PM.png',
   amazon500:  '/assets/ChatGPT Image Aug 19, 2026, 03_27_44 PM.png',
   amazon20:   '/assets/ChatGPT Image Aug 19, 2026, 05_07_43 PM.png',
 };
