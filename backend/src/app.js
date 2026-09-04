@@ -6,6 +6,7 @@ const morgan   = require('morgan');
 const { generalLimiter } = require('./middleware/rateLimitMiddleware');
 const { errorHandler }   = require('./middleware/errorMiddleware');
 const giveawayRoutes     = require('./routes/giveawayRoutes');
+const authRoutes         = require('./routes/authRoutes');
 
 const app = express();
 
@@ -54,6 +55,7 @@ app.get('/health', (_req, res) => res.json({ status: 'ok', timestamp: new Date()
 
 // ── API routes ────────────────────────────────────────────────────────────────
 app.use('/api/giveaways', giveawayRoutes);
+app.use('/api/auth', authRoutes);
 app.use('/api/balance', require('./routes/balanceRoutes'));
 // Seed route (disabled in production for security)
 if (process.env.NODE_ENV !== 'production') {

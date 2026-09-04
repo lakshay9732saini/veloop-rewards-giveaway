@@ -25,6 +25,10 @@ const userBalanceSchema = new mongoose.Schema({
   displayId: {
     type: String,
   },
+  isInitialized: {
+    type: Boolean,
+    default: false,
+  },
 }, {
   timestamps: true,
 });

@@ -15,7 +15,7 @@ import UserStatusCard from '../../components/UserStatusCard/UserStatusCard';
 import PrizeClaimModal from '../../components/PrizeClaimModal/PrizeClaimModal';
 import GiveawayLoader from '../../components/GiveawayLoader/GiveawayLoader';
 import MyParticipations from '../../components/MyParticipations/MyParticipations';
-import { fetchCurrentGiveaway, fetchGiveawayStats } from '../../services/api';
+import { fetchCurrentGiveaway, fetchGiveawayStats, fetchMyClaim } from '../../services/api';
 import { GIVEAWAY_STATUS } from '../../data/giveawayData';
 import { useUser } from '../../context/UserContext';
 
@@ -27,7 +27,7 @@ export default function GiveawayPage() {
   const [showClaim,    setShowClaim]    = useState(false);
   const [claimDone,    setClaimDone]    = useState(false);
 
-  const { user } = useUser(); // Use user from context
+  const { user, setUser, markPrizeClaimed } = useUser(); // Use user from context
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -45,6 +45,27 @@ export default function GiveawayPage() {
   }, []);
 
   useEffect(() => { load(); }, [load]);
+
+  useEffect(() => {
+    const giveawayId = user.wonPrize?.giveawayId;
+    if (!giveawayId || user.wonPrize?.claimStatus !== 'NOT_SUBMITTED') return;
+
+    fetchMyClaim(giveawayId).then((response) => {
+      if (response.success && response.data?.status) {
+        const status = response.data.status;
+        setUser((currentUser) => ({
+          ...currentUser,
+          wonPrize: currentUser.wonPrize
+            ? { ...currentUser.wonPrize, claimStatus: status }
+            : currentUser.wonPrize,
+        }));
+        localStorage.setItem('veloop_user', JSON.stringify({
+          ...user,
+          wonPrize: { ...user.wonPrize, claimStatus: status },
+        }));
+      }
+    });
+  }, [user, setUser]);
 
   const handleCountdownEnd = useCallback(() => {
     setGiveaway((g) => g ? { ...g, status: GIVEAWAY_STATUS.ENDED } : g);
@@ -126,7 +147,11 @@ export default function GiveawayPage() {
           <PrizeClaimModal
             wonPrize={user.wonPrize}
             onClose={() => setShowClaim(false)}
-            onSuccess={() => { setClaimDone(true); setShowClaim(false); }}
+            onSuccess={() => {
+              markPrizeClaimed('SUBMITTED');
+              setClaimDone(true);
+              setShowClaim(false);
+            }}
           />
         )}
       </AnimatePresence>

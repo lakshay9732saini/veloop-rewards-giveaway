@@ -27,7 +27,7 @@ export default function ConfirmJoinModal({ prize, giveaway, onClose, onSuccess }
   const [error, setError] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { user, updateBalance, refreshBalance, addParticipation } = useUser();
+  const { user, updateBalance, setBalance, refreshBalance, addParticipation } = useUser();
   const balance = user.balance[prize.entryCurrency] || 0;
   const fee = prize.entryFee;
   const balanceAfter = balance - fee;
@@ -52,7 +52,11 @@ export default function ConfirmJoinModal({ prize, giveaway, onClose, onSuccess }
         setSuccess(true);
         
         // Update balance in context
-        updateBalance(prize.entryCurrency, fee);
+        if (res.data?.balanceAfter != null && res.data.currency) {
+          setBalance(res.data.currency, res.data.balanceAfter);
+        } else {
+          updateBalance(prize.entryCurrency, fee);
+        }
         // Reconcile both navbar and giveaway cards with the persisted balance.
         await refreshBalance();
         

@@ -119,7 +119,7 @@ export const prizes = [
     claimType: CLAIM_TYPE.GIFT_CARD_FORM,
     winnerCount: 10,
     entryCurrency: CURRENCY.VE,
-    entryFee: 500,
+    entryFee: 100,
     participants: 4203,
     accentColor: '#f59e0b',
     badge: 'Easy Entry',
@@ -138,7 +138,7 @@ export const prizes = [
     claimType: CLAIM_TYPE.GIFT_CARD_FORM,
     winnerCount: 20,
     entryCurrency: CURRENCY.VE,
-    entryFee: 300,
+    entryFee: 100,
     participants: 6780,
     accentColor: '#f59e0b',
     badge: 'Most Popular',
@@ -156,8 +156,8 @@ export const prizes = [
     type: PRIZE_TYPE.GIFT_CARD,
     claimType: CLAIM_TYPE.GIFT_CARD_FORM,
     winnerCount: 100,
-    entryCurrency: CURRENCY.TOKEN,
-    entryFee: 2000,
+    entryCurrency: CURRENCY.VE,
+    entryFee: 100,
     participants: 12043,
     accentColor: '#f59e0b',
     badge: 'Highest Chance',
@@ -184,7 +184,7 @@ export const currentGiveaway = {
   totalEntries: 34291,
   rules: [
     'Must be a registered VELOOP Rewards member to participate.',
-    'Each user may participate once per giveaway event.',
+    'Each user may participate once per prize in this giveaway event.',
     'Entry fee is non-refundable once participation is recorded. [Placeholder — confirm with VELOOP policy]',
     'Winners are selected by a fair random draw from eligible participants.',
     'Winners will be announced within 24 hours of the giveaway ending.',
@@ -198,12 +198,12 @@ export const currentGiveaway = {
     'Must have a verified VELOOP Rewards account.',
     'Account must be in good standing (no active violations).',
     'Must have sufficient balance of the required currency (VEs/SVEs/Tokens).',
-    'One entry per eligible user per giveaway event.',
+    'One entry per eligible user per prize.',
   ],
   participationSettings: {
-    allowMultipleEntries: false,
+    allowMultipleEntries: true,
     additionalEntriesViaTask: true,
-    maxEntriesPerUser: 1,
+    maxEntriesPerUser: prizes.length,
   },
   winnerAnnouncementDate: new Date(endDate.getTime() + 24 * 60 * 60 * 1000).toISOString(),
   claimDeadlineDays: 7,
@@ -368,18 +368,9 @@ export const demoUser = {
   },
   entries: 24,
   // States: 'visitor' | 'loggedIn' | 'participating' | 'winner' | 'nonWinner' | 'ended' | 'upcoming'
-  userState: 'winner',
+  userState: 'visitor',
   // Which prize this user won (only relevant when userState === 'winner')
-  wonPrize: {
-    prizeId: 'PRIZE-002',
-    prizeName: 'Apple Watch Series 9',
-    prizeType: PRIZE_TYPE.PHYSICAL,
-    claimType: CLAIM_TYPE.PHYSICAL_FORM,
-    giveawayId: 'GW-2026-09',
-    giveawayTitle: 'September Mega Rewards Giveaway',
-    claimStatus: 'NOT_SUBMITTED', // NOT_SUBMITTED | SUBMITTED | PROCESSING | COMPLETED | EXPIRED
-    claimDeadline: new Date(endDate.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-  },
+  wonPrize: null,
 };
 
 // ─── Statistics ─────────────────────────────────────────────────────────────────

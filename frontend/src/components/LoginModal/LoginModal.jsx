@@ -12,9 +12,15 @@ export default function LoginModal({ onClose, onSuccess }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    if (!email || !password) {
-      setError('Please enter both email and password');
+
+    const normalizedEmail = email.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[A-Za-z]{2,}$/.test(normalizedEmail)) {
+      setError('Please enter an email with a valid extension, such as .com or .in');
+      return;
+    }
+
+    if (password.length < 8) {
+      setError('Password must be at least 8 characters long');
       return;
     }
 
@@ -22,14 +28,14 @@ export default function LoginModal({ onClose, onSuccess }) {
     setError(null);
 
     try {
-      const res = await login(email, password);
+      const res = await login(normalizedEmail, password);
       if (res.success) {
         onSuccess && onSuccess(res.data.user);
-        window.location.reload();
+        onClose();
       } else {
         setError(apiErrors[res.error] || res.message || 'Login failed. Please try again.');
       }
-    } catch (err) {
+    } catch {
       setError('Something went wrong. Please try again.');
     } finally {
       setLoading(false);
@@ -152,6 +158,7 @@ export default function LoginModal({ onClose, onSuccess }) {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter your password"
                 required
+                minLength={8}
                 disabled={loading}
                 autoComplete="current-password"
                 style={{
@@ -223,7 +230,7 @@ export default function LoginModal({ onClose, onSuccess }) {
                 background: 'radial-gradient(circle, rgba(124, 58, 237, 0.2) 0%, transparent 70%)',
                 pointerEvents: 'none'
               }}></div>
-              <strong style={{ color: '#c4b5fd', fontWeight: 600 }}>🎭 Demo Mode:</strong> Enter any email/password to login with demo account
+              <strong style={{ color: '#c4b5fd', fontWeight: 600 }}>🎭 Demo Mode:</strong> Use a valid email and an 8-character minimum password
             </div>
 
             {/* Buttons */}

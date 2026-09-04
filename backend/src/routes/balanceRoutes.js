@@ -1,11 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const { getWalletBalance } = require('../services/balanceService');
+const { authenticate } = require('../middleware/authMiddleware');
 
 // GET /api/balance/:userId
-router.get('/:userId', async (req, res, next) => {
+router.get('/:userId', authenticate, async (req, res, next) => {
   try {
-    const { userId } = req.params;
+    const userId = req.user.id;
     const balance = await getWalletBalance(userId);
     
     res.json({

@@ -52,7 +52,7 @@ async function joinGiveaway({ userId, giveawayId, prizeId, requestId, reqContext
   if (!prize) throw Object.assign(new Error('Prize not found'), { code: 'GIVEAWAY_NOT_FOUND' });
 
   // ── 4. Check existing participation ──────────────────────────────────────
-  const existing = await GiveawayParticipation.findOne({ userId, giveawayId });
+  const existing = await GiveawayParticipation.findOne({ userId, giveawayId, prizeId });
   if (existing) throw Object.assign(new Error('Already participating'), { code: 'ALREADY_PARTICIPATING' });
 
   // ── 5. Fraud evaluation ───────────────────────────────────────────────────
@@ -144,8 +144,10 @@ async function joinGiveaway({ userId, giveawayId, prizeId, requestId, reqContext
 /**
  * Get user's participation status for a giveaway.
  */
-async function getMyStatus(userId, giveawayId) {
-  const participation = await GiveawayParticipation.findOne({ userId, giveawayId });
+async function getMyStatus(userId, giveawayId, prizeId) {
+  const query = { userId, giveawayId };
+  if (prizeId) query.prizeId = prizeId;
+  const participation = await GiveawayParticipation.findOne(query);
   return {
     isParticipating: !!participation,
     joinedAt: participation?.joinedAt,

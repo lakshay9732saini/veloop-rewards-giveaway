@@ -17,9 +17,9 @@ const GiveawayParticipationSchema = new mongoose.Schema({
   joinedAt:      { type: Date, default: Date.now },
 }, { timestamps: true });
 
-// ── Compound unique index: one participation per user per giveaway ─────────────
-// This is the database-level guarantee against duplicates.
-GiveawayParticipationSchema.index({ userId: 1, giveawayId: 1 }, { unique: true });
+// ── Compound unique index: one participation per user per prize ───────────────
+// A user can enter multiple prizes in the same giveaway, but not the same prize twice.
+GiveawayParticipationSchema.index({ userId: 1, giveawayId: 1, prizeId: 1 }, { unique: true });
 
 // Also track device per giveaway to flag same-device abuse
 GiveawayParticipationSchema.index({ deviceHash: 1, giveawayId: 1 });

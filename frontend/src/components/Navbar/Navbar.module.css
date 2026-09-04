@@ -40,6 +40,26 @@
 /* Right */
 .right { display: flex; align-items: center; gap: 0.625rem; flex-shrink: 0; }
 
+.loginButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border: 1px solid rgba(167, 139, 250, 0.55);
+  border-radius: var(--r-md);
+  padding: 0.5rem 0.9rem;
+  background: rgba(124, 58, 237, 0.18);
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--t-fast);
+}
+
+.loginButton:hover {
+  background: rgba(124, 58, 237, 0.35);
+  border-color: var(--purple-300);
+}
+
 /* Gold coin balance */
 .balance {
   display: flex; align-items: center; gap: 0.4rem;

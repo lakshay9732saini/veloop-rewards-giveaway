@@ -9,7 +9,10 @@
 
 require('dotenv').config({ path: require('path').resolve(__dirname, '../../.env') });
 const mongoose = require('mongoose');
+const dns = require('dns');
 const Giveaway = require('../models/Giveaway');
+const GiveawayParticipation = require('../models/GiveawayParticipation');
+const PrizeClaim = require('../models/PrizeClaim');
 
 // ─── Asset paths (must match frontend public/assets filenames) ─────────────────
 const ASSETS = {
@@ -105,7 +108,7 @@ const giveaways = [
         claimType:     'gift_card_form',
         winnerCount:   10,
         entryCurrency: 'VEs',
-        entryFee:      500,
+        entryFee:      100,
         badge:         'Easy Entry',
       },
       {
@@ -122,7 +125,7 @@ const giveaways = [
         claimType:     'gift_card_form',
         winnerCount:   20,
         entryCurrency: 'VEs',
-        entryFee:      300,
+        entryFee:      100,
         badge:         'Most Popular',
       },
       {
@@ -138,8 +141,8 @@ const giveaways = [
         type:          'GIFT_CARD',
         claimType:     'gift_card_form',
         winnerCount:   100,
-        entryCurrency: 'Tokens',
-        entryFee:      2000,
+        entryCurrency: 'VEs',
+        entryFee:      100,
         badge:         'Highest Chance',
       },
     ],
@@ -283,12 +286,23 @@ const winners = [
 async function seed() {
   try {
     console.log('[SEED] Connecting to MongoDB...');
-    await mongoose.connect(process.env.MONGODB_URI);
+    const dnsServers = (process.env.MONGODB_DNS_SERVERS || '1.1.1.1,8.8.8.8')
+      .split(',')
+      .map((server) => server.trim())
+      .filter(Boolean);
+    dns.setServers(dnsServers);
+    await mongoose.connect(process.env.MONGODB_URI || process.env.MONGO_URI, {
+      serverSelectionTimeoutMS: 10000,
+      connectTimeoutMS: 10000,
+    });
+    await GiveawayParticipation.syncIndexes();
     console.log('[SEED] Connected.');
 
     // Clear existing data
     await Giveaway.deleteMany({});
     await GiveawayWinner.deleteMany({});
+    await GiveawayParticipation.deleteMany({});
+    await PrizeClaim.deleteMany({});
     console.log('[SEED] Cleared existing giveaways and winners.');
 
     // Insert giveaways

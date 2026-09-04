@@ -4,6 +4,8 @@ const mongoose = require('mongoose');
 const Giveaway = require('../models/Giveaway');
 const GiveawayWinner = require('../models/GiveawayWinner');
 const UserBalance = require('../models/UserBalance');
+const GiveawayParticipation = require('../models/GiveawayParticipation');
+const PrizeClaim = require('../models/PrizeClaim');
 
 // Asset paths
 const ASSETS = {
@@ -273,6 +275,8 @@ router.post('/run', async (req, res) => {
     // Clear and insert
     await Giveaway.deleteMany({});
     await GiveawayWinner.deleteMany({});
+    await GiveawayParticipation.deleteMany({});
+    await PrizeClaim.deleteMany({});
     await UserBalance.deleteMany({});
     
     await Giveaway.insertMany(giveaways);

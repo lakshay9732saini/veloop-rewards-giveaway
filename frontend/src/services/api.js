@@ -129,11 +129,12 @@ export async function fetchAllPreviousWinners() {
  * GET /api/giveaways/:id/my-status  (requires auth token)
  * Note: :id can be either giveaway ID or slug - backend should handle both
  */
-export async function fetchMyParticipationStatus(giveawayIdOrSlug) {
+export async function fetchMyParticipationStatus(giveawayIdOrSlug, prizeId) {
   try {
     const token = localStorage.getItem('veloop_token');
     if (!token) throw new Error('No token');
-    const res = await apiFetch(`/giveaways/${giveawayIdOrSlug}/my-status`);
+    const query = prizeId ? `?prizeId=${encodeURIComponent(prizeId)}` : '';
+    const res = await apiFetch(`/giveaways/${giveawayIdOrSlug}/my-status${query}`);
     if (res.success) return res;
     throw new Error(res.error);
   } catch {
@@ -199,28 +200,13 @@ export async function submitPrizeClaim(giveawayId, claimData) {
       return res;
     }
     
-    // If backend fails, still return success for demo
-    console.warn('[API] Backend claim failed, using demo mode');
-    return {
-      success: true,
-      data: { 
-        claimId: 'CLAIM-DEMO-' + Date.now(), 
-        status: 'SUBMITTED' 
-      },
-      message: 'Claim submitted successfully!',
-      _mock: true,
-    };
+    return res;
   } catch (error) {
     console.error('[API] Prize claim error:', error);
-    // Fallback to demo mode on error
     return {
-      success: true,
-      data: { 
-        claimId: 'CLAIM-DEMO-' + Date.now(), 
-        status: 'SUBMITTED' 
-      },
-      message: 'Claim submitted successfully!',
-      _mock: true,
+      success: false,
+      error: 'NETWORK_ERROR',
+      message: 'Unable to verify winner status. Please try again.',
     };
   }
 }
@@ -235,8 +221,6 @@ export async function fetchMyClaim(giveawayId) {
     const res = await apiFetch(`/giveaways/${giveawayId}/my-claim`);
     return res;
   } catch {
-    const user = demoUser;
-    if (user.wonPrize?.giveawayId === giveawayId) return { success: true, data: user.wonPrize, _mock: true };
     return { success: false, error: 'CLAIM_NOT_FOUND', _mock: true };
   }
 }
@@ -276,7 +260,13 @@ export async function fetchUserBalance(userId) {
 // ─── Auth helpers ──────────────────────────────────────────────────────────────
 function authHeader() {
   const token = localStorage.getItem('veloop_token');
-  return token ? { Authorization: `Bearer ${token}` } : {};
+  const headers = token ? { Authorization: `Bearer ${token}` } : {};
+  try {
+    const user = JSON.parse(localStorage.getItem('veloop_user') || 'null');
+    if (user?.isDemoFallback && user.id) headers['X-Demo-User-Id'] = user.id;
+  } catch {
+  }
+  return headers;
 }
 
 // ─── Auth Endpoints ─────────────────────────────────────────────────────────────
@@ -295,16 +285,21 @@ export async function login(email, password) {
     // Check if response is JSON
     const contentType = res.headers.get('content-type');
     if (!contentType || !contentType.includes('application/json')) {
-      // Not JSON response (probably HTML error page) - use demo mode
-      throw new Error('Backend not available');
+      throw new TypeError('Backend not available');
     }
     
     const json = await res.json();
     
     if (!res.ok) {
-      // Server responded but with error - use demo mode anyway
-      console.warn('[API] Backend error, using demo login');
-      throw new Error('Backend error');
+      if (res.status === 404 && json.error === 'NOT_FOUND') {
+        throw new TypeError('Login route not available');
+      }
+
+      return {
+        success: false,
+        error: json.error || 'LOGIN_FAILED',
+        message: json.message,
+      };
     }
     
     // Store token and user data
@@ -314,6 +309,8 @@ export async function login(email, password) {
     return { success: true, data: json };
     
   } catch (error) {
+    if (!(error instanceof TypeError)) throw error;
+
     console.warn('[API] Backend unreachable — using demo login');
     // For demo, create user from email and merge with demoUser properties
     const userName = email.split('@')[0]; // Get name from email
@@ -323,10 +320,15 @@ export async function login(email, password) {
       displayId: 'VE****' + Math.floor(Math.random() * 90 + 10),
       name: userName.charAt(0).toUpperCase() + userName.slice(1), // Capitalize
       email: email,
-      balance: demoUser.balance, // Use demoUser's balance
+        balance: {
+          VEs: 10000,
+          SVEs: 5000,
+          Tokens: 50000,
+        },
       entries: demoUser.entries,
       userState: demoUser.userState, // Use demoUser's state (winner/participating)
-      wonPrize: demoUser.wonPrize // Include won prize if user is winner
+      wonPrize: demoUser.wonPrize, // Include won prize if user is winner
+      isDemoFallback: true,
     };
     
     localStorage.setItem('veloop_token', demoToken);
@@ -395,6 +397,8 @@ export const API_ERROR_MESSAGES = {
   PARTICIPATION_BLOCKED:      "Participation couldn't be completed. Please try again or contact support.",
   SUSPICIOUS_ACTIVITY:        "Participation couldn't be completed. Please contact support.",
   RATE_LIMITED:               'Too many requests. Please wait a moment before trying again.',
+  INVALID_EMAIL:              'Please enter an email with a valid extension.',
+  PASSWORD_TOO_SHORT:         'Password must be at least 8 characters long.',
   CLAIM_NOT_ALLOWED:          "You don't have an active prize to claim.",
   UNKNOWN_ERROR:              'Something went wrong. Please try again.',
 };

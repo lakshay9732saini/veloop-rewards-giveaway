@@ -1,6 +1,6 @@
 const express = require('express');
 const router  = express.Router();
-const { authenticate }   = require('../middleware/authMiddleware');
+const { authenticate, optionalAuth } = require('../middleware/authMiddleware');
 const { joinLimiter, claimLimiter } = require('../middleware/rateLimitMiddleware');
 const { validateJoin }   = require('../validators/giveawayValidators');
 const {
@@ -27,8 +27,8 @@ router.get('/:id/winners', getGiveawayWinners);
 router.get('/:id/my-status',        authenticate, getMyParticipationStatus);
 
 // Join and claim routes - allow without auth for admin demo mode
-router.post('/:id/join',            joinLimiter, validateJoin, join);
-router.post('/:giveawayId/claim',   claimLimiter, submitClaim);
-router.get('/:giveawayId/my-claim', getMyClaim);
+router.post('/:id/join',            optionalAuth, joinLimiter, validateJoin, join);
+router.post('/:giveawayId/claim',   authenticate, claimLimiter, submitClaim);
+router.get('/:giveawayId/my-claim', authenticate, getMyClaim);
 
 module.exports = router;

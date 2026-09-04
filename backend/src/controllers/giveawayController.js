@@ -110,7 +110,7 @@ async function getGiveawayWinners(req, res, next) {
 // GET /api/giveaways/:id/my-status  (requires auth)
 async function getMyParticipationStatus(req, res, next) {
   try {
-    const status = await getMyStatus(req.user.id, req.params.id);
+    const status = await getMyStatus(req.user.id, req.params.id, req.query.prizeId);
     const winnerRecord = await checkIfWinner(req.user.id, req.params.id);
     res.json({
       success: true,

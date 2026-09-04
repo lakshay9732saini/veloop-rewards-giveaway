@@ -11,7 +11,7 @@ import Footer from '../../components/Footer/Footer';
 import Countdown from '../../components/Countdown/Countdown';
 import ConfirmJoinModal from '../../components/ConfirmJoinModal/ConfirmJoinModal';
 import GiveawayLoader from '../../components/GiveawayLoader/GiveawayLoader';
-import { fetchGiveawayBySlug } from '../../services/api';
+import { fetchGiveawayBySlug, fetchMyParticipationStatus } from '../../services/api';
 import { GIVEAWAY_STATUS } from '../../data/giveawayData';
 import { useUser } from '../../context/UserContext';
 
@@ -23,7 +23,7 @@ const HOW_STEPS = [
   { num: '01', title: 'Review the Giveaway',      desc: 'Read the prize details, entry fee, and terms carefully before joining.' },
   { num: '02', title: 'Check Eligibility',         desc: 'Ensure your VELOOP Rewards account is verified and in good standing.' },
   { num: '03', title: 'Pay Entry Fee',             desc: 'The required VEs/SVEs/Tokens will be deducted from your balance.' },
-  { num: '04', title: 'Participation Recorded',    desc: 'Your entry is securely recorded in our system. One entry per user.' },
+  { num: '04', title: 'Participation Recorded',    desc: 'Your entry is securely recorded in our system. One entry per prize.' },
   { num: '05', title: 'Wait for the Draw',         desc: 'The giveaway runs until the end date. Keep checking your dashboard.' },
   { num: '06', title: 'Winner Selected',           desc: 'After the giveaway ends, a fair random draw selects the winner(s).' },
   { num: '07', title: 'Claim Your Prize',          desc: 'Winners are notified. Submit claim details within 7 days of announcement.' },
@@ -47,7 +47,7 @@ function buildTerms(prize) {
   return [
     { icon: '👤', label: 'Eligibility',          text: 'Must have a verified VELOOP Rewards account in good standing.' },
     { icon: '💰', label: 'Entry Requirement',     text: `${fmt(fee)} ${currency} required to participate. Fee is deducted from your balance upon joining.` },
-    { icon: '🔒', label: 'One Entry Per User',    text: 'Each user may participate only once in this giveaway event.' },
+    { icon: '🔒', label: 'One Entry Per Prize',  text: 'Each user may participate only once in each prize in this giveaway event.' },
     { icon: '📅', label: 'Giveaway Duration',     text: 'Giveaway runs from the start date to the end date shown on this page.' },
     { icon: '🎲', label: 'Winner Selection',      text: 'Winners are selected by a fair, verifiable random draw from all eligible participants.' },
     { icon: '📢', label: 'Winner Announcement',   text: 'Winners are announced within 24 hours of the giveaway ending via dashboard and email.' },
@@ -86,7 +86,10 @@ export default function GiveawayDetailPage() {
       setGiveaway(gRes.data);
       setPrize(resolvedPrize ?? null);
       setImageError(false);
-      setMyStatus(null);
+      const statusRes = resolvedPrize
+        ? await fetchMyParticipationStatus(gRes.data.id, resolvedPrize.id)
+        : null;
+      setMyStatus(statusRes?.success ? statusRes.data : null);
     } catch {
       setError("We couldn't load this giveaway. Please try again.");
     } finally {

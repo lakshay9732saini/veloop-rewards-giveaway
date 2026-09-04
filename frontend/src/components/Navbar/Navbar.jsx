@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ChevronLeft, LogOut, Menu, X } from 'lucide-react';
+import { ChevronLeft, LogIn, LogOut, Menu, X } from 'lucide-react';
 import styles from './Navbar.module.css';
 import { CURRENCY } from '../../data/giveawayData';
 import { useUser } from '../../context/UserContext';
+import LoginModal from '../LoginModal/LoginModal';
 
 const NAV_LINKS = [
   { label: 'Dashboard',  to: '/', isExternal: false },
@@ -17,9 +18,9 @@ export default function Navbar({ showBack = false, backLabel = 'Giveaway Home' }
   const location = useLocation();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
-  const { user } = useUser(); // Get user from context
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const { user, setUser, refreshBalance, resetUser, isLoggedIn } = useUser();
   
-  const loggedIn = true; // Always logged in as admin
   const balance = user.balance?.[CURRENCY.VE] ?? 0;
 
   // Close menus when clicking outside
@@ -37,8 +38,8 @@ export default function Navbar({ showBack = false, backLabel = 'Giveaway Home' }
   }, [showUserMenu, showMobileMenu]);
 
   const handleLogout = () => {
-    // Just close menu (no actual logout since always admin)
     setShowUserMenu(false);
+    resetUser();
   };
 
   return (
@@ -97,14 +98,20 @@ export default function Navbar({ showBack = false, backLabel = 'Giveaway Home' }
 
           {/* Right */}
           <div className={styles.right}>
-            {/* Balance */}
-            <div className={styles.balance} aria-label={`${balance.toLocaleString()} VEs balance`} title={`VE: ${user.balance?.VEs || user.balance?.[CURRENCY.VE] || 0} | SVE: ${user.balance?.SVEs || user.balance?.[CURRENCY.SVE] || 0} | Tokens: ${user.balance?.Tokens || user.balance?.[CURRENCY.TOKEN] || 0}`}>
-              <div className={styles.coinIcon} aria-hidden="true">🪙</div>
-              <span className={styles.balanceText}>{balance.toLocaleString()} VE</span>
-            </div>
+            {isLoggedIn ? (
+              <div className={styles.balance} aria-label={`${balance.toLocaleString()} VEs balance`} title={`VE: ${user.balance?.VEs || user.balance?.[CURRENCY.VE] || 0} | SVE: ${user.balance?.SVEs || user.balance?.[CURRENCY.SVE] || 0} | Tokens: ${user.balance?.Tokens || user.balance?.[CURRENCY.TOKEN] || 0}`}>
+                <div className={styles.coinIcon} aria-hidden="true">🪙</div>
+                <span className={styles.balanceText}>{balance.toLocaleString()} VE</span>
+              </div>
+            ) : (
+              <button type="button" className={styles.loginButton} onClick={() => setShowLoginModal(true)}>
+                <LogIn size={15} aria-hidden="true" />
+                Login
+              </button>
+            )}
 
             {/* User Avatar */}
-            <div className={styles.userDropdown}>
+            {isLoggedIn && <div className={styles.userDropdown}>
               <div 
                 className={styles.avatarChip} 
                 role="button" 
@@ -125,11 +132,11 @@ export default function Navbar({ showBack = false, backLabel = 'Giveaway Home' }
                   </div>
                   <button className={styles.logoutBtn} onClick={handleLogout}>
                     <LogOut size={14} aria-hidden="true" />
-                    Close Menu
+                    Logout
                   </button>
                 </div>
               )}
-            </div>
+            </div>}
 
             {/* Hamburger Menu (Mobile) */}
             <button 
@@ -149,6 +156,18 @@ export default function Navbar({ showBack = false, backLabel = 'Giveaway Home' }
 
         </div>
       </div>
+
+      {showLoginModal && (
+        <LoginModal
+          onClose={() => setShowLoginModal(false)}
+          onSuccess={async (loggedInUser) => {
+            setUser(loggedInUser);
+            if (!loggedInUser.isDemoFallback) {
+              await refreshBalance(loggedInUser.id);
+            }
+          }}
+        />
+      )}
 
       {/* Mobile Menu */}
       {showMobileMenu && (
