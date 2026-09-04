@@ -247,7 +247,10 @@
   .statsGrid { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 576px) {
-  .hero { padding: 2rem 0 1.5rem; }
+  .hero { padding: 1rem 0 1.5rem; }
+  .inner { gap: 0.35rem; }
+  .illustration { min-height: 235px; transform: translateY(-8px); }
+  .heroImg { width: 180px; height: 180px; }
   .statsGrid { grid-template-columns: repeat(2, 1fr); }
   .statItem { padding: 0.875rem 1rem; }
   .statItem { gap: 0.5rem; }
