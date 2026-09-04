@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import styles from './GiveawayPage.module.css';
 import Navbar from '../../components/Navbar/Navbar';
 import Footer from '../../components/Footer/Footer';
@@ -71,6 +71,13 @@ export default function GiveawayPage() {
     setGiveaway((g) => g ? { ...g, status: GIVEAWAY_STATUS.ENDED } : g);
   }, []);
 
+  const revealProps = {
+    initial: { opacity: 0, y: 22 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true, amount: 0.12 },
+    transition: { duration: 0.55, ease: 'easeOut' },
+  };
+
   if (loading) return <GiveawayLoader />;
 
   if (error) {
@@ -110,33 +117,37 @@ export default function GiveawayPage() {
         )}
 
         {/* 3. Active Giveaway prize cards */}
-        <FeaturedGiveaways
-          prizes={giveaway?.prizes ?? []}
-          giveawayEndAt={giveaway?.endAt}
-        />
+        <motion.div {...revealProps}>
+          <FeaturedGiveaways
+            prizes={giveaway?.prizes ?? []}
+            giveawayEndAt={giveaway?.endAt}
+          />
+        </motion.div>
 
         {/* 4. How to Participate */}
-        <HowToParticipate />
+        <motion.div {...revealProps}><HowToParticipate /></motion.div>
 
         {/* 5. Winner Announcement slider */}
-        <WinnerSlider />
+        <motion.div {...revealProps}><WinnerSlider /></motion.div>
 
         {/* 6. Winners tabs (current + previous) */}
-        <WinnersTabs giveaway={giveaway} />
+        <motion.div {...revealProps}><WinnersTabs giveaway={giveaway} /></motion.div>
 
         {/* 6.5 My Participations */}
-        <MyParticipations />
+        <motion.div {...revealProps}><MyParticipations /></motion.div>
 
         {/* 7. Trust section */}
-        <TrustSection />
+        <motion.div {...revealProps}><TrustSection /></motion.div>
 
         {/* 8. Rules */}
         {giveaway && (
-          <GiveawayRules rules={giveaway.rules ?? []} eligibility={giveaway.eligibility ?? []} />
+          <motion.div {...revealProps}>
+            <GiveawayRules rules={giveaway.rules ?? []} eligibility={giveaway.eligibility ?? []} />
+          </motion.div>
         )}
 
         {/* 9. FAQ */}
-        <FAQ />
+        <motion.div {...revealProps}><FAQ /></motion.div>
 
       </main>
       <Footer />

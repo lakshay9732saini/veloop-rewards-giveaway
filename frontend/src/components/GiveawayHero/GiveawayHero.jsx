@@ -1,12 +1,9 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ArrowRight, Users, Trophy } from 'lucide-react';
+import { ArrowRight, Clock3, Coins, Gem, Sparkles, Users } from 'lucide-react';
 import { motion } from 'framer-motion';
 import styles from './GiveawayHero.module.css';
 import { GIVEAWAY_STATUS, ASSETS } from '../../data/giveawayData';
 import ADMIN_USER from '../../config/adminUser';
-
-const fmt = (n) => (n ?? 0).toLocaleString();
 
 function pad(n) { return String(n).padStart(2, '0'); }
 
@@ -19,6 +16,13 @@ function getTimeLeft(endDate) {
     m: Math.floor((diff % 3600000)  / 60000),
     s: Math.floor((diff % 60000)    / 1000),
   };
+}
+
+function getProgress(startDate, endDate) {
+  const start = new Date(startDate).getTime();
+  const end = new Date(endDate).getTime();
+  if (!Number.isFinite(start) || !Number.isFinite(end) || end <= start) return 0;
+  return Math.min(100, Math.max(0, ((Date.now() - start) / (end - start)) * 100));
 }
 
 function LiveCountdown({ endDate }) {
@@ -43,10 +47,10 @@ function LiveCountdown({ endDate }) {
   );
 }
 
-export default function GiveawayHero({ giveaway, stats, onCountdownEnd }) {
-  const navigate = useNavigate();
+export default function GiveawayHero({ giveaway, stats }) {
   const user   = ADMIN_USER;
   const status = giveaway?.status || GIVEAWAY_STATUS.ACTIVE;
+  const progress = getProgress(giveaway?.startAt, giveaway?.endAt);
 
   const scrollTo = (id) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
 
@@ -99,6 +103,28 @@ export default function GiveawayHero({ giveaway, stats, onCountdownEnd }) {
                   : 'Our next big giveaway is coming soon. Get ready!'}
               </p>
 
+              <div className={styles.heroMeta}>
+                <div className={styles.countdownCard}>
+                  <div className={styles.countdownHeading}>
+                    <span className={styles.countdownIcon}><Clock3 size={15} /></span>
+                    <span>Time left to enter</span>
+                    <span className={styles.livePill}><span className="live-dot" /> LIVE</span>
+                  </div>
+                  {giveaway?.endAt
+                    ? <LiveCountdown endDate={giveaway.endAt} />
+                    : <span className={styles.countdownUnavailable}>Countdown unavailable</span>}
+                  <div className={styles.progressTrack} aria-label={`${Math.round(progress)}% of giveaway period elapsed`}>
+                    <motion.span
+                      className={styles.progressFill}
+                      initial={{ width: 0 }}
+                      animate={{ width: `${progress}%` }}
+                      transition={{ duration: 1.2, delay: 0.35, ease: 'easeOut' }}
+                    />
+                  </div>
+                  <div className={styles.progressLabels}><span>Giveaway live</span><span>{Math.round(progress)}% elapsed</span></div>
+                </div>
+              </div>
+
               <div className={styles.ctaRow}>
                 <button className={styles.ctaBtn} onClick={handleCta}>
                   {getCtaLabel()} <ArrowRight size={16} />
@@ -127,6 +153,9 @@ export default function GiveawayHero({ giveaway, stats, onCountdownEnd }) {
               aria-hidden="true"
             >
               <div className={styles.illustrationGlow} />
+              <span className={`${styles.floatToken} ${styles.tokenOne}`}><Coins size={19} /></span>
+              <span className={`${styles.floatToken} ${styles.tokenTwo}`}><Gem size={17} /></span>
+              <span className={`${styles.floatToken} ${styles.tokenThree}`}><Sparkles size={14} /></span>
               <img src={ASSETS.ticket}    alt="" className={styles.heroImg} />
               <img src={ASSETS.giftBoxAlt} alt="" className={styles.accentImg} />
               <div className={`${styles.chip} ${styles.chip1}`}>
